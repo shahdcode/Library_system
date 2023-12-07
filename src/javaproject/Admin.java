@@ -16,6 +16,7 @@ import java.util.Collections;
  *
  * @author zaina
  */
+//Mariam
 public  class Admin extends User{
         private static ArrayList<ArrayList<String>> newSupplierList = new ArrayList<>();
         private static ArrayList<ArrayList<String>> admins = new ArrayList<>();
