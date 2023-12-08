@@ -1,21 +1,24 @@
 package javaproject;
 import java.util.Scanner;
-import java.util.List;
+//import java.util.List;
 import java.util.ArrayList;
 
 public class Librarian_Mgn {
   //  private Borrower currentBorrowing;
   //  private Borrower borrower;
     private static ArrayList<Book> allbooks=new ArrayList<>();
-    private static ArrayList<Book> book2=new ArrayList<>();
+   private  ArrayList<Book> books=new ArrayList<>();
     private  ArrayList<String> cancelarr = new ArrayList<>();// per user, me4 static
-    private List<Book> cancelbooks=new ArrayList<>();
+    private ArrayList<Book> cancelbooks=new ArrayList<>();
     private ArrayList<String> bookTitles = new ArrayList<String>();
-    private List<Borrower_Mgn> records=new ArrayList<>();
+    private ArrayList<Borrower_Mgn> records=new ArrayList<>();
 
     public Librarian_Mgn() {
     }
-
+public Librarian_Mgn(String Name,String password)
+  {
+    super(Name.password);
+  }
 
     public static ArrayList<Book> getAllbooks() {
         return allbooks;
@@ -26,34 +29,34 @@ public class Librarian_Mgn {
     }
     
 
-    public static ArrayList<Book> getBook2() {
-        return book2;
-    }
+    // public static ArrayList<Book> getBook2() {
+    //     return book2;
+    // }
     
     
     
   // private static ArrayList<Book> books=new ArrayList<>();
-       public double createBorrowing( String category) 
-      {
-      ArrayList<Book> borrowedBooks = new ArrayList<>();
-    double totalPayment = 0.0;
-    for (Book i : book2) {
-        if (i.getCategory().equals(category)) {
-          System.out.println(i.getTitle());
-           System.out.println("Do you want to borrow " + i.getTitle() + "? (yes/no)");
-            Scanner scanner = new Scanner(System.in);
-          String answer = scanner.nextLine();
-           if (answer.equals("yes")) {
-              borrowedBooks.add(i);
-                totalPayment += i.getPrice();
-            }
-       }
-    }
-    System.out.println("You have successfully borrowed " + borrowedBooks.size() + " books from the " + category + " category.");
-    System.out.println("The total payment for the borrowed books is $" + totalPayment + ".");
-    return totalPayment;
+//        public double createBorrowing( String category) 
+//       {
+//       ArrayList<Book> borrowedBooks = new ArrayList<>();
+//     double totalPayment = 0.0;
+//     for (Book i : book2) {
+//         if (i.getCategory().equals(category)) {
+//           System.out.println(i.getTitle());
+//            System.out.println("Do you want to borrow " + i.getTitle() + "? (yes/no)");
+//             Scanner scanner = new Scanner(System.in);
+//           String answer = scanner.nextLine();
+//            if (answer.equals("yes")) {
+//               borrowedBooks.add(i);
+//                 totalPayment += i.getPrice();
+//             }
+//        }
+//     }
+//     System.out.println("You have successfully borrowed " + borrowedBooks.size() + " books from the " + category + " category.");
+//     System.out.println("The total payment for the borrowed books is $" + totalPayment + ".");
+//     return totalPayment;
 
-}
+// }
    public void createBorrowing(Borrower borrower,Book book)
     {
         Borrower_Mgn record=new Borrower_Mgn(borrower,book);
@@ -61,7 +64,13 @@ public class Librarian_Mgn {
         
         
     }
-
+  public void display()
+   {
+       for(Borrower_Mgn i:records)
+       {
+           System.out.println(i);
+       }
+   }
     public static void selectCategory() {
         System.out.println("Select a category seperated by commas (fiction,non-fiction,science) ");
         Scanner scanner = new Scanner(System.in);
@@ -70,7 +79,7 @@ public class Librarian_Mgn {
         for(String i:categ)
         {
             i=i.trim();
-            List<Book> selectedBooks=new ArrayList<>();//array han7ot feh el selected categories
+            ArrayList<Book> selectedBooks=new ArrayList<>();//array han7ot feh el selected categories
             for(Book b:Book.getBooks())
             {
                 switch(i)
@@ -109,8 +118,8 @@ public class Librarian_Mgn {
     
     public void selectbyauthor(String author)
     {
-        List<Book> books=Book.getBooks();
-         List<Book> filteredbooks=new ArrayList<>();
+         books=Book.getBooks();
+         ArrayList<Book> filteredbooks=new ArrayList<>();
          for(Book i: books)
          {
              if(i.getAuthor().equals(author))
@@ -134,6 +143,7 @@ public class Librarian_Mgn {
 //}
  
    public static double calculatePayment( User borrow) {
+     try{
      int totalPayment = 0;
     for (Book book : borrow.getBorrowedBooks()) {
        
@@ -141,6 +151,11 @@ public class Librarian_Mgn {
        
     }
     return totalPayment;   
+        }catch(Exception e)
+       {
+           System.out.println(e);
+                   return 0;
+       }
 }
    
    public ArrayList<String> parseBookTitles(String input) {
@@ -151,6 +166,7 @@ public class Librarian_Mgn {
     return bookTitles;
 }
 public void cancelBorrowing(Borrower borrower) {
+  try{
  System.out.println("Do you want to cancel any books from your cart? (Y/N)");
         Scanner s=new Scanner(System.in);
             String cancelBooksInput = s.next();
@@ -186,6 +202,10 @@ public void cancelBorrowing(Borrower borrower) {
             } else {
                 System.out.println("Invalid input. Checkout canceled. No books added to the borrower's record.");
             }
+    }catch(Exception e)
+       {
+           System.out.println(e);
+        }
         }
 
 }
