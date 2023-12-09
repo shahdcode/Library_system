@@ -164,7 +164,6 @@ public static void signIn(int usertype, String username,String password,
 
        String password;
         Admin admin=new Admin(); //to call non static methods 
-        Supplier supplier=new Supplier();
         Librarian librarian=new Librarian();
         Librarian_Mgn manage=new Librarian_Mgn();
          User borrower;  
@@ -524,8 +523,8 @@ break;
             System.out.println("8: Edit book");
             System.out.println("9: Remove book");
             System.out.println("10: Add Order"); 
-            System.out.println("11: Remove Supplier"); 
-            System.out.println("12: Search supplier.");
+            System.out.println("11: Remove Order"); 
+            System.out.println("12: Remove supplier.");
             System.out.println("13: Display supplier Info.");
             System.out.println("14: Display All suppliers.");
             System.out.println("15: Edit supplier.");
@@ -630,26 +629,19 @@ switch(ch){
                     // Add Supplier 
 
                         // Add Supplier 
-            System.out.println("Enter information for Supplier:");
-            System.out.print("Enter supplier name: ");
-            String supplierName = input.nextLine();
-
-            // Check if the supplier already exists
-            if (!admin.searchSupplier(supplierName)) {
+           System.out.print("Enter supplier name: ");
+            String supplierName = input.next();
                 System.out.print("Enter supplier Password: ");
-                 password = input.next();
-                int numOfOrders = 0;
-                double revenue = 0.0;
+                String password = input.next();
+              admin.addSupplier(supplierName, password);
+          
+         
+
+                    break; 
 //                      admin.addSupplier(supplierName, password, numOfOrders, revenue);
              
             }
-            else{
-            System.out.print("Supplier already exists.");
-            }
-            admin.saveToFile(supplierName);
-
-                    break; 
-
+   
             case 6:
             System.out.println("List of books:");
              Book.listBooks();
@@ -703,66 +695,91 @@ switch(ch){
 
                 case 10:
                     //Add Order
-                    String sName;
+                            String sName;
+                    String titleB;
+                    int amount;
+                    
 
-                    supplier.displayAllSuppliers();
+                    admin.displaySuppliers();
                     System.out.println("Enter the name of the supplier you want to order from");
                     sName= input.next();
-                    librarian.addOrder(sName);
-                    supplier.recieveOrder(sName);
-                    admin.saveToFile(sName);
+                    if(admin.isAvailable( sName)){
+                    admin.displayPrices( sName);
+                    System.out.println("what book do you want to order");
+                    titleB= input.next();
+                    System.out.println("how many books do you want to order");
+                    amount= input.nextInt();
+                    Supplier Asupplier =new Supplier(sName);
+                    admin.addOrder(sName,titleB,amount);}
+        else{                    System.out.println("no books available");
+}
+                  
+              
                     
                     
                     
                     break;
+                    
+                    
+              
                 case 11:
-                    //Remove Supplier
+                    //Remove Order
+                    
+                String cName;
+                    String bTitle;
+                    admin.displaySuppliers();
+                    System.out.println("Which supplier did you order from");
+                    cName= input.next();
+                    admin.displayOrders(cName);
+                    System.out.println("Whats the title of the book you'd like to cancel");
+                    bTitle= input.next();
+              
+                                   admin.cancelOrder(bTitle,cName);
+                        break;    
+                case 12:
+                        //Remove Supplier
                     
                   String removedSupplier;
-                  supplier.displayAllSuppliers();
+                  admin.displaySuppliers();
                   System.out.println("which supplier would you like to remove.");
                   removedSupplier=input.next();
                   admin.removeSupplier(removedSupplier);
                     break;
-                case 12:
-                    //Search Supplier
-                    String SName;
-                    System.out.println("Which supplier are you looking for?");
-                    SName=input.next();
-                    if(admin.searchSupplier(SName)){
-                    System.out.println("Supplier found");
-                    }
-                    else{
-                        System.out.println("Supplier not found");
-                    }
-                    break;
+             
                     
                 case 13:
                     //Display a specific supplier info
-                    String Dname;
+                  String Dname;
+                    admin.displaySuppliers();
                      System.out.println("Which supplier do you want to display thier file?");
                     Dname=input.next();
-                 //   admin.displaySupplierInfo(Dname);
+                   admin.displaySupplierInfo(Dname);
                     
                     break;
+                    
+                   
                 case 14:
                     //display all suppliers info
-                 //   admin.displayAllSuppliers();
+                    admin.displaySuppliers();
                     break;
                 case 15:
                     // Edit Supplier
-                     String Ename;
+                            String Ename;
+                     String Epass;
+                     admin.displaySuppliers();
                      System.out.println("Which supplier do you want to edit");
                      Ename=input.next();
-                     supplier.editSupplier(Ename);
+                     System.out.println("Enter supplier password:");
+                     Epass=input.next();
+                     admin.editSupplier(Ename,Epass);
                      break;
                      
                 case 16:
                     //View Supplier Orders
-                     String Vname;
+                        String Vname;
                      System.out.println("Which supplier do you want to view their order");
                      Vname=input.next();
-                     supplier.SupplierOrders(Vname);
+                     admin.displayOrders(Vname);
                     
                     break;
                 case 17: 
@@ -791,19 +808,20 @@ switch(ch){
                 case 19: 
 
                     // View Supplier with Max Orders 
-
-                    System.out.println("Supplier with Max Orders: " + admin.getSupplierWithMaxOrders()); 
-
+                            System.out.println("Supplier with Max Revenue: " ); 
+                   admin.SmaxOrders();
                     break; 
+
+                
 
   
 
                 case 20: 
 
                     // View Supplier with Max Revenue 
-
-                    System.out.println("Supplier with Max Revenue: " + admin.getSupplierWithMaxRevenue()); 
-
+  
+                      System.out.println("Supplier with Max Orders: " ); 
+                    admin.SmaxRevenue();
                     break; 
 case 21:
     
