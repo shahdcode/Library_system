@@ -18,7 +18,9 @@ public class Librarian extends User {
 
    // Librarian library=new Librarian();
   //  private Object librarian;
-    
+     public Librarian(){
+        
+    }
 
     public Librarian(String userName, String password) {
         super(userName,password);
@@ -37,9 +39,7 @@ public class Librarian extends User {
     librarians=new ArrayList<>();
     }
     
-    public Librarian(){
-        
-    }
+   
     
     
 //    public Librarian(String userName) {
