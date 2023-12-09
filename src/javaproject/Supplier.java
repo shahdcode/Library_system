@@ -52,7 +52,6 @@ class Supplier extends User {
     }
 
     public void receiveOrder(String bookTitle, int numberOfCopies) {
-        settingPrices();
         double finalPrice = -1;            if(searchBook(bookTitle)){
          String fileName="C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+Sname + "_Prices.txt";
                try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
@@ -76,7 +75,8 @@ class Supplier extends User {
         
        
         saveSupplierInfo();
-      
+              System.out.println("Order placed successfully!");
+
         }
         else{
         System.out.println("book not found");
@@ -108,6 +108,18 @@ class Supplier extends User {
 
     public void displayOrders() {
         String FileName = Sname + "_Orders.txt";
+        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+    }
+    
+    public void displayPrices() {
+        String FileName = Sname + "_Prices.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
