@@ -1,4 +1,3 @@
-
 package javaproject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,12 +10,10 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.io.File;
 
-
 /**
  *
  * @author zaina
  */
-
 public  class Admin extends User{
      private List<Borrower_Mgn> records=new ArrayList<>(); 
 private static ArrayList<Supplier> suppliers = new ArrayList<>();
@@ -26,8 +23,6 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
        private String pass;
        private String name;
        private double revenue;
-    private String sName;
-    private int numOfOrders;
     private File file=new File("admins.txt");
    private File file1=new File("librarians.txt");
     public void addAdmin(User ad) {
@@ -108,7 +103,6 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
          this.name = name;
         this.pass = id;
          this.revenue = 0.0;
-        this.numOfOrders = 0;     
     }
   
 
@@ -122,21 +116,6 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
         return revenue;
     }
 
-    public void setSName(String sName) {
-        this.sName = sName;
-    }
-
-    public String getSName() {
-        return sName;
-    }
-
-    public void setNumberOfOrders(int numOfOrders) {
-        this.numOfOrders = numOfOrders;
-    }
-
-    public int getNumberOfOrders() {
-        return numOfOrders;
-    }
 
 
  
@@ -762,9 +741,5 @@ public void editlibrarian( String old, String field, String newvalue) {
 }
 
    
-
-
-
-
 
 
