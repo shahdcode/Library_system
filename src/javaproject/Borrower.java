@@ -66,7 +66,51 @@ public ArrayList<String> getnames (){
         return returnedDate;
     }
 
-    
+       public List<User> readFromFile() {
+        
+       List<User> usr=new ArrayList<User>();//hy store el borrowers mn el file
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+             String currentUserName=null;
+                    String currentUserPass;
+            boolean readingBooks = false;  // Flag to indicate when to start reading book titles
+            int index=-1;
+            while ((line = reader.readLine()) != null) {
+             
+                if (line.startsWith("User Name: ")) {                  
+                    String[] userInfo = line.substring("User Name: ".length()).split(" ");                 
+                     currentUserName = userInfo[0];
+               
+                     index++;
+                }
+                        else  if (line.startsWith("Password: ")) {                  
+                    String[] userInfo = line.substring("Password: ".length()).split(" ");                 
+                 
+                     currentUserPass = userInfo[0];
+                     User br=new Borrower(currentUserName,currentUserPass);
+                     usr.add(br);
+                     
+                } else if (line.equals("Borrowed Books:")) {
+                    readingBooks = true;  // Start reading book titles
+                     
+                    
+                } else if (readingBooks && !line.isEmpty()) {
+                    // Store the borrowed book with its username
+                    
+                    usr.get(index).borrowBook(line);
+                   System.out.println(line);
+                }
+                else if(line.isEmpty())
+                {
+                     readingBooks = false; 
+                }
+            }       
+            
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    return usr;
+   }
     
 public void addTo(String name, String pass){
  User newUser = new Borrower(name,pass);
