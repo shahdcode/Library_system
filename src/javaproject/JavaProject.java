@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
-public class JavaProject {
+public class JavaProject{
     
     
 //public static void signIn(int usertype, String username,String password){
@@ -511,6 +511,7 @@ break;
                       case 3: //pass el admin fixed w ha chech hena 3aliha
              
         Scanner bookinput= new Scanner(System.in);
+        int choose;
        do{
             
             System.out.println("1: Add User"); 
@@ -536,7 +537,7 @@ break;
             System.out.println("21: View borrowing term details");
             System.out.println("22: View all borrowers");
             System.out.println("23: Exit");
-            int choose=bookinput.nextInt();
+            choose=bookinput.nextInt();
             bookinput.nextLine();
         
         switch(choose){
@@ -632,7 +633,7 @@ switch(ch){
            System.out.print("Enter supplier name: ");
             String supplierName = input.next();
                 System.out.print("Enter supplier Password: ");
-                String password = input.next();
+                String sPassword = input.next();
               admin.addSupplier(supplierName, password);
           
          
@@ -640,7 +641,7 @@ switch(ch){
                     break; 
 //                      admin.addSupplier(supplierName, password, numOfOrders, revenue);
              
-            }
+            
    
             case 6:
             System.out.println("List of books:");
@@ -848,7 +849,7 @@ case 22:
                 break;
             
         } 
-        }while (choice != 23);
+        }while (choose != 23);
                   }
   }
          }
