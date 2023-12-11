@@ -42,7 +42,7 @@ public class Book implements Serializable {
     //for total borrows of all books
     private int price;
     // creates a list of book objects 
-   private static List<Book> books= new ArrayList<>();
+   private static ArrayList<Book> books= new ArrayList<>();
     
     //data memeber shahd me7tagha
     private static int totalBorrows=-1;
@@ -60,7 +60,7 @@ public class Book implements Serializable {
         return ratings.isEmpty()?0:(double)sum/ratings.size();
     }
 
-    public static List<Book> getBooks() {
+    public static ArrayList<Book> getBooks() {
         return books;
     }
 
@@ -169,7 +169,7 @@ public class Book implements Serializable {
             throw new Exception ("Book already exists in file ");
             }
             books.add(book);
-            Librarian_Mgn.getBook2(); //zaina me7taga deih
+          //  Librarian_Mgn.getBook2(); //zaina me7taga deih
             //saves el arraylist ashan teb2a updated 
            
             saveBooks();

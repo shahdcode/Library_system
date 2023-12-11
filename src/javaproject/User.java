@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public  class User {
     private String Name;
@@ -30,7 +31,29 @@ public User(String Name, String pass) {//constructor
     public ArrayList<Book> getBorrowedBooks() {
         return BorrowedBooks;
     }
-
+     public void clearCart()
+ {
+     BorrowedBooks.clear();
+ }
+          public   void removeBooksFromCart(User borrower, List<Book> booksToCancel) {
+    for (Book i : booksToCancel) {
+       System.out.println( "i");
+    }
+    }
+               public  Book findbookbytitle(String title)
+{
+    for(Book book:Book.getBooks())
+    {
+        if(book.getTitle().equals(title))
+        {
+            System.out.println(book);
+        }
+    }
+    return null;
+}
+                     public void addLibrarian( User newLibrarian){
+        System.out.println("No librarian user");
+    }
     public void setBorrowedBooks(ArrayList<Book> BorrowedBooks) {
         this.BorrowedBooks = BorrowedBooks;
     }
