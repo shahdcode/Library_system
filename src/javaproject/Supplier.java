@@ -142,12 +142,14 @@ class Supplier extends User {
 
 
  
-    public boolean searchBook(String title) {
-       
+     public boolean searchBook(String title) {
+      
         boolean found = false;
-      if(Book.searchBook(title)!=null){
-      found=true;
-      }
+      
+            if (Book.searchBook(title) != null) {
+                found = true;
+            }
+        
         return found;
     }
 }
