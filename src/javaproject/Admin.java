@@ -14,6 +14,7 @@ import java.io.File;
  *
  * @author zaina
  */
+//Mariam
 public  class Admin extends User{
      private List<Borrower_Mgn> records=new ArrayList<>(); 
 private static ArrayList<Supplier> suppliers = new ArrayList<>();
