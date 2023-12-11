@@ -142,15 +142,12 @@ class Supplier extends User {
 
 
  
-
     public boolean searchBook(String title) {
-        Book book = new Book(title);
+       
         boolean found = false;
-        for (int i = 0; i < book.getBooks().size(); i++) {
-            if (book.findBookByTitle(title) != null) {
-                found = true;
-            }
-        }
+      if(Book.searchBook(title)!=null){
+      found=true;
+      }
         return found;
     }
 }
