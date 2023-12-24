@@ -230,15 +230,15 @@ public static void addLibrarian( Librarian newLibrarian){
  public static void saveToFile(){
           try{
              
-              PrintWriter print=new PrintWriter("librarians.txt");
+             ObjectOutputStream out =new ObjectOutputStream(new FileOutputStream("librarians.binary"));
               
-              for(User user:Librarian.getLibrarians()){
+              for(User user:librarians){
                   if( user instanceof Librarian){
                 Librarian librarian=(Librarian)user;
-                  print.println(librarian.getUserName()+", "+librarian.getPassword());
+                  out.writeObject(librarian);
               }
               }
-              print.close();
+              out.close();
           }
           catch(IOException e){
              System.out.println(e);
