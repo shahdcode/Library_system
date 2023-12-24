@@ -34,6 +34,8 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
        private ArrayList<Book> books;
        private String pass;
        private String name;
+        private String sName;
+    private int numOfOrders;
         @Override
     public String toString() {
         return "Admin [username=" + name + ", password=" + pass + "]"; // Assuming you have username and password fields
@@ -92,31 +94,9 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
         e.printStackTrace(); 
     }
 }
- public static void saveToFile(){
-          try{
-             
-              PrintWriter print=new PrintWriter("C:\\Users\\zaina\\OneDrive\\Documents\\NetBeansProjects\\javaproject\\librarians,dat");
-              
-              for(User user:librarians){
-                  if( user instanceof Librarian){
-                Librarian librarian=(Librarian)user;
-                  print.println(librarian.getUserName()+" "+librarian.getPassword());
-              }
-              }
-              print.close();
-          }
-          catch(IOException e){
-             System.out.println(e);
-          }
-      }
 
-    
- 
-    public void addLibrarian( Librarian newLibrarian){
-        librarians.add(newLibrarian);
-        
-        saveToFile();
-    }
+
+
 //    
 // public void specifyBorrowingTermDetails(User user) {
 //       int totalfine=0;
@@ -409,7 +389,8 @@ public void editlibrarian( String old, String field, String newvalue) {
     return average;
     
 }
-   public boolean searchNameInFile(String fileName, String targetName) {
+
+   public boolean searchNameInFile(String fileName, String targetName) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -417,12 +398,132 @@ public void editlibrarian( String old, String field, String newvalue) {
                 if (parts.length >= 1 && parts[0].equals(targetName)) {
                     return true;
                 }
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+
+    
+    
+    
+//    public void viewLibrarianWithMaxBorrowings()from shahd
+//    {
+//        
+//    }
+//    public void viewBorrowingsPerLibrarian() from malak
+   // {
+//        
+//    }
+    
+    
+    //Mariam
+            
+    
+    
+    
+//    public void viewLibrarianWithMaxBorrowings()from shahd
+//    {
+//        
+//    }
+//    public void viewBorrowingsPerLibrarian() from malak
+   // {
+//        
+//    }
+    
+    
+    //Mariam
+            
+      public void addOrder(String supplierName, String book, double amount) throws IOException {
+      
+           for (int i=0;i<newSupplierList.size();i++) {
+         
+           if (newSupplierList.get(i).get(0).equals(sName)){
+             numOfOrders = Integer.parseInt(newSupplierList.get(i).get(1)) + 1;
+             revenue = Double.parseDouble(newSupplierList.get(i).get(2)) + amount;
+
+            newSupplierList.get(i).set(1, Integer.toString(numOfOrders));
+            newSupplierList.get(i).set(2, Double.toString(revenue));
+
+            System.out.println("Order added successfully.");
+        } else {
+            System.out.println("Supplier not found.");
         }
-        return false;
+            
     }
+
+    }
+
+
+       public void addSupplier(String sName, int numOfOrders, double revenue) throws IOException {
+              Scanner s = new Scanner(System.in);
+                System.out.print("Enter supplier name:");
+             System.out.println();
+             sName = s.next();
+             System.out.print("Enter supplier number of orders:");
+             System.out.println();
+             numOfOrders = s.nextInt();
+             System.out.print("Enter supplier revenue:");
+             System.out.println();
+             revenue = s.nextDouble();
+        ArrayList<String> supplierInfo = new ArrayList<>();
+        supplierInfo.add(sName);
+        supplierInfo.add(Integer.toString(numOfOrders));
+        supplierInfo.add(Double.toString(revenue));
+
+        newSupplierList.add(supplierInfo);
+
+    }
+    
+public static void addLibrarian( Librarian newLibrarian){
+        Librarian.getLibrarians().add(newLibrarian);
+        
+        saveToFile();
+}
+ public static void saveToFile(){
+          try{
+             
+             ObjectOutputStream out =new ObjectOutputStream(new FileOutputStream("librarians.binary"));
+              
+              for(User user:librarians){
+                  if( user instanceof Librarian){
+                Librarian librarian=(Librarian)user;
+                  out.writeObject(librarian);
+              }
+              }
+              out.close();
+          }
+          catch(IOException e){
+             System.out.println(e);
+          }
+      }
+
+
+
+public void addSupplier(String sName,String password, int numOfOrders, double revenue) throws IOException {
+        ArrayList<String> supplierInfo = new ArrayList<>();
+        if(!searchSupplier(sName)){
+        supplierInfo.add(sName);
+        supplierInfo.add(password);
+        supplierInfo.add(Integer.toString(numOfOrders));
+        supplierInfo.add(Double.toString(revenue));
+        newSupplierList.add(supplierInfo);
+        }
+        else{
+            System.out.println("This supplier already exists");
+        }
+        
+
+    }
+public void specifyBorrowingTermDetails(User user) {
+       int totalfine=0;
+       
+       for(Borrower_Mgn i:records)
+       {  
+           if(i.getUser().equals(user))
+           {
+          // totalfine+=i.CalculateFine(); 
+           }
+       }
+       System.out.println( totalfine);
+}
+ 
+
     public boolean searchFile(String directoryPath, String targetFileName) {
         File directory = new File(directoryPath);
 
@@ -447,6 +548,16 @@ public void editlibrarian( String old, String field, String newvalue) {
 
     
     //Mariam
+      public static boolean searchSupplier(String sName) {
+         for (int i=0;i<newSupplierList.size();i++) {
+         
+           if (newSupplierList.get(i).get(0).equals(sName))
+        {
+                return true;
+            }
+        }
+        return false;
+    }
    public void addOrder(String supplierName, String bookTitle, int numberOfCopies) {
         Supplier supplier = new Supplier(supplierName);
        
