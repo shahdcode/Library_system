@@ -569,13 +569,8 @@ break;
                 Admin adminForAdmin = new Admin();
                 adminForAdmin.addAdmin(newUser);
                 
-                try {
-                    adminForAdmin.saveAllAdminsToFile();
-                    System.out.println("Admin added and saved successfully.");
-                } catch (IOException e) {
-                    System.out.println("Failed to save admins: " + e.getMessage());
-                    e.printStackTrace();
-                }
+                adminForAdmin.saveAllAdminsToFile();
+                System.out.println("Admin added and saved successfully.");
                 break;
 
             default:
@@ -606,13 +601,14 @@ break;
             break;
         case 2:
                 {
-                    try {
-                        admin.editadmin(Name, Field, newValue);
-                    } catch (ClassNotFoundException ex) {
-                       System.out.println( ex);
-                    }
+                try {
+                    admin.editadmin(Name, Field, newValue);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(JavaProject.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 }
               break;
+
 
     }
 
