@@ -12,10 +12,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public  class User {
+public  class User implements Serializable {
     private String Name;
 private String pass;
  private ArrayList<Book> BorrowedBooks=new ArrayList();

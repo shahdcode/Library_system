@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
-public class JavaProject {
+public class JavaProject{
     
     
 //public static void signIn(int usertype, String username,String password){
@@ -164,10 +164,22 @@ public static void signIn(int usertype, String username,String password,
 
        String password;
         Admin admin=new Admin(); //to call non static methods 
-        Supplier supplier=new Supplier();
         Librarian librarian=new Librarian();
         Librarian_Mgn manage=new Librarian_Mgn();
          User borrower;  
+        Book book1 = new Book("Title 1", "Author 1", "fiction");
+        Book book2 = new Book("Title 2", "Author 2", "fiction");
+ Book book3 = new Book("Title 3", "Author 1", "non-fiction");
+        Book book4 = new Book("Title 4", "Author 2", "science");
+         book1.setPrice(100);
+ book2.setPrice(80);
+book3.setPrice(70);
+ book4.setPrice(90);
+        // Adding books
+        Book.addBook(book1);
+        Book.addBook(book2);
+          Book.addBook(book3);
+        Book.addBook(book4);
 Borrower borrower1 = new Borrower("Borrower1", "Password1");
         Borrower borrower2 = new Borrower("Borrower2", "Password2");
         Librarian librarian1 = new Librarian("Librarian1", "Password1");
@@ -231,8 +243,7 @@ Borrower borrower1 = new Borrower("Borrower1", "Password1");
 input.nextLine();
             switch (choice1) {
                 case 1:
-                       Book book1 = new Book("Title 1", "Author 1", "Category 1");
-        Book book2 = new Book("Title 2", "Author 2", "Category 2");
+       
 
         // Adding books
         Book.addBook(book1);
@@ -327,7 +338,15 @@ input.nextLine();
                 System.out.println("5. librarian with max revenue");
                 System.out.println("6.librarian with max borrowings");
                 System.out.println("7.list books");
+            System.out.println("8. cancel borrowing");//working
+            System.out.println("9. create a borrowing");//working
+            System.out.println("10. select category");//working
+            System.out.println("11. Display borrowering term details");//working
+            System.out.println("12. by authors preference");//working
+            System.out.println("13. calculate payment");//working
+             System.out.println("14. exit");//working
                  choice=input.nextInt();
+
                 switch(choice){
                     case 1: 
                    
@@ -399,7 +418,89 @@ input.nextLine();
                     case 7:
                         Book.listBooks();
                         break;
+                               case 8:
+                            Borrower b=new Borrower();
+         List<User> u=b.readFromFile(); 
+                    System.out.println("Enter borrower's name to cancel borrowing: ");
+                    
+                    String borrowerNameToCancel = input.next();
+                    for(User i:u)
+                    {
+                        if(i.getName().equals(borrowerNameToCancel))  
+                        {
+                         manage.cancelBorrowing(i); 
+                         break;//user found
+                        }
+                    }
+                    break;
                         
+                case 9:
+                                Borrower bro=new Borrower();
+         List<User> user=bro.readFromFile(); 
+             System.out.print("Enter borrower's name ");
+String borrowerName = input.nextLine();
+        borrower = null;//(borrowerName.equals("b1")) ? b1 : (borrowerName.equals("b2") ? b2 : null);
+
+                     for(User i:user)
+                    {
+                        if(i.getName().equals(borrowerName))  
+                        {
+                        borrower=i;
+                         break;//user found
+                        }
+                    }
+
+if(borrower!=null)
+{
+    System.out.print("Enter book title: ");
+    String bookTitle = input.nextLine();
+    Book selectedBook = borrower.findbookbytitle(bookTitle);
+    if (selectedBook != null) {
+        manage.createBorrowing(borrower, selectedBook);
+        manage.display();
+    } else {
+        System.out.println("Book not found.");
+    }
+} else {
+    System.out.println("Borrower not found.");
+}
+break;
+                   case 10:
+                   manage.selectCategory(); 
+                    break;
+                case 11:     
+                      
+//          manage.specifyBorrowingTermDetails(username);
+          break;
+              case 12:         
+           System.out.print("Enter the author's name: ");
+                    String authorName = input.nextLine();
+                    manage.selectbyauthor(authorName);
+                    break;
+        
+            case 13:         
+           System.out.println("Enter borrower's name to calculate payment: ");
+                    String borrowerNameToCalculatePayment = input.next();
+                                        Borrower brow=new Borrower();
+         List<User> usered=brow.readFromFile(); 
+         borrower=null;
+                  for(User i:usered)
+                    {
+                        if(i.getName().equals(borrowerNameToCalculatePayment))  
+                        {
+                        borrower=i;
+                         break;//user found
+                        }
+                    }
+                   if(borrower!=null)
+                   {
+                       System.out.println( manage.calculatePayment(borrower));
+                   }
+       break;           
+                        case 14:
+               System.out.println("exited" );
+                System.exit(0);
+                break;
                     default: 
                         System.out.println("choice you entered is invalid");
                 }
@@ -408,13 +509,9 @@ input.nextLine();
                      break;
                           
                       case 3: //pass el admin fixed w ha chech hena 3aliha
-                            Book book1 = new Book("Title 1", "Author 1", "Category 1");
-        Book book2 = new Book("Title 2", "Author 2", "Category 2");
-
-        // Adding books
-        Book.addBook(book1);
-        Book.addBook(book2);
+             
         Scanner bookinput= new Scanner(System.in);
+        int choose;
        do{
             
             System.out.println("1: Add User"); 
@@ -427,8 +524,8 @@ input.nextLine();
             System.out.println("8: Edit book");
             System.out.println("9: Remove book");
             System.out.println("10: Add Order"); 
-            System.out.println("11: Remove Supplier"); 
-            System.out.println("12: Search supplier.");
+            System.out.println("11: Remove Order"); 
+            System.out.println("12: Remove supplier.");
             System.out.println("13: Display supplier Info.");
             System.out.println("14: Display All suppliers.");
             System.out.println("15: Edit supplier.");
@@ -438,49 +535,108 @@ input.nextLine();
             System.out.println("19: View Supplier with Max Orders"); 
             System.out.println("20: View Supplier with Max Revenue");
             System.out.println("21: View borrowing term details");
-            System.out.println("22: Add admin"); //lesa ma7tnha4
-            System.out.println("23: View all borrowers");
-            System.out.println("24: Exit");
-            int choose=bookinput.nextInt();
-            bookinput.nextLine();
+            System.out.println("22: View all borrowers");
+            System.out.println("23: Exit");
+           choose=input.nextInt();
+            input.nextLine();
         
         switch(choose){
 
                 case 1:
 //Add User
+   try {
         System.out.println("Enter the name of the new user:");
         String newName = input.next();
 
         System.out.println("Enter the password for the new user:");
         String newPassword = input.next();
         User newUser = new User(newName, newPassword);
-        admin.addUser(newUser);
-        //admin.saveToFile(newName);
-        Admin.saveToFile(); // added for updates
 
-        System.out.println("User added successfully.");
+        System.out.println("Choose what you want to add this user as: ");
+        System.out.println("1) Librarian");
+        System.out.println("2) Admin");
+
+        int ch = input.nextInt();
+
+        switch (ch) {
+            case 1:
+               
+                admin.addLibrarian(newUser);
+                System.out.println("Librarian added successfully.");
+                break;
+
+            case 2:
+                Admin adminForAdmin = new Admin();
+                adminForAdmin.addAdmin(newUser);
+                
+                try {
+                    adminForAdmin.saveAllAdminsToFile();
+                    System.out.println("Admin added and saved successfully.");
+                } catch (IOException e) {
+                    System.out.println("Failed to save admins: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                break;
+
+            default:
+                System.out.println("Invalid choice.");
+                break;
+        }
+
+    } catch (NoSuchElementException e) {
+        System.out.println("Error reading input: " + e.getMessage());
+        e.printStackTrace();
+    }
+    
   break;
                 case 2: 
                //Edit User
     System.out.print("Enter user name to edit: ");
     String Name = input.next();
-    System.out.print("Enter field to edit (name/password): ");
+    System.out.print("Enter field to edit (Name/password): ");
     String Field = input.next();
     System.out.print("Enter new value: ");
     String newValue = input.next();
-    admin.editUser(Name, Field, newValue);
+    System.out.print("in what do you want to edit 1)librarian 2)admin: ");
+    int value = input.nextInt();
+    switch(value)
+    {
+        case 1:
+          //  admin.editlibrarian(Name, Field, newValue);
+            break;
+        case 2:
+                {
+                    try {
+                        admin.editadmin(Name, Field, newValue);
+                    } catch (ClassNotFoundException ex) {
+                       System.out.println( ex);
+                    }
+                }
+              break;
+
+    }
+
     
                     break; 
 
                     
 
                 case 3: 
-                   //Search For A User
-  System.out.print("Enter field to search by (id/name): ");
+                     //Search For A User
+                             //Search For A User
+     System.out.print("in what do you want to edit 1)librarian 2)admin: ");
+    int value1 = input.nextInt();
+    switch(value1)
+    {
+        case 1:   
+            //searchlibrarian();
+break;
+        case 2:
+              System.out.print("Enter field to search by (id/name): ");
     String searchField = input.next();
     System.out.print("Enter "+searchField+" to search for: ");
     String searchValue = input.next();
-    List<User> searchresult = admin.searchUsers(searchField, searchValue);
+    List<User> searchresult = admin.searchAdmin(searchField, searchValue);
     
     if (!searchresult.isEmpty()) {
         System.out.println("Search results:");
@@ -491,7 +647,8 @@ input.nextLine();
         System.out.println("No matching users found.");
     }
     break;
-
+    }
+    break;
             case 4: 
                 System.out.println("Enter title:");
                 String title= bookinput.nextLine();
@@ -512,26 +669,19 @@ input.nextLine();
                     // Add Supplier 
 
                         // Add Supplier 
-            System.out.println("Enter information for Supplier:");
-            System.out.print("Enter supplier name: ");
-            String supplierName = input.nextLine();
-
-            // Check if the supplier already exists
-            if (!admin.searchSupplier(supplierName)) {
+           System.out.print("Enter supplier name: ");
+            String supplierName = input.next();
                 System.out.print("Enter supplier Password: ");
-                 password = input.next();
-                int numOfOrders = 0;
-                double revenue = 0.0;
-//                      admin.addSupplier(supplierName, password, numOfOrders, revenue);
-             
-            }
-            else{
-            System.out.print("Supplier already exists.");
-            }
-            admin.saveToFile(supplierName);
+                String sPassword = input.next();
+              admin.addSupplier(supplierName, password);
+          
+         
 
                     break; 
-
+//                      admin.addSupplier(supplierName, password, numOfOrders, revenue);
+             
+            
+   
             case 6:
             System.out.println("List of books:");
              Book.listBooks();
@@ -585,72 +735,98 @@ input.nextLine();
 
                 case 10:
                     //Add Order
-                    String sName;
+                            String sName;
+                    String titleB;
+                    int amount;
+                    
 
-                    supplier.displayAllSuppliers();
+                    admin.displaySuppliers();
                     System.out.println("Enter the name of the supplier you want to order from");
                     sName= input.next();
-                    librarian.addOrder(sName);
-                    supplier.recieveOrder(sName);
-                    admin.saveToFile(sName);
+                    if(admin.isAvailable( sName)){
+                    admin.displayPrices( sName);
+                    System.out.println("what book do you want to order");
+                    titleB= input.next();
+                    System.out.println("how many books do you want to order");
+                    amount= input.nextInt();
+                    Supplier Asupplier =new Supplier(sName);
+                    admin.addOrder(sName,titleB,amount);}
+        else{                    System.out.println("no books available");
+}
+                  
+              
                     
                     
                     
                     break;
+                    
+                    
+              
                 case 11:
-                    //Remove Supplier
+                    //Remove Order
+                    
+                String cName;
+                    String bTitle;
+                    admin.displaySuppliers();
+                    System.out.println("Which supplier did you order from");
+                    cName= input.next();
+                    admin.displayOrders(cName);
+                    System.out.println("Whats the title of the book you'd like to cancel");
+                    bTitle= input.next();
+              
+                                   admin.cancelOrder(bTitle,cName);
+                        break;    
+                case 12:
+                        //Remove Supplier
                     
                   String removedSupplier;
-                  supplier.displayAllSuppliers();
+                  admin.displaySuppliers();
                   System.out.println("which supplier would you like to remove.");
                   removedSupplier=input.next();
                   admin.removeSupplier(removedSupplier);
                     break;
-                case 12:
-                    //Search Supplier
-                    String SName;
-                    System.out.println("Which supplier are you looking for?");
-                    SName=input.next();
-                    if(admin.searchSupplier(SName)){
-                    System.out.println("Supplier found");
-                    }
-                    else{
-                        System.out.println("Supplier not found");
-                    }
-                    break;
+             
                     
                 case 13:
                     //Display a specific supplier info
-                    String Dname;
+                  String Dname;
+                    admin.displaySuppliers();
                      System.out.println("Which supplier do you want to display thier file?");
                     Dname=input.next();
-                 //   admin.displaySupplierInfo(Dname);
+                   admin.displaySupplierInfo(Dname);
                     
                     break;
+                    
+                   
                 case 14:
                     //display all suppliers info
-                 //   admin.displayAllSuppliers();
+                    admin.displaySuppliers();
                     break;
                 case 15:
                     // Edit Supplier
-                     String Ename;
+                            String Ename;
+                     String Epass;
+                     admin.displaySuppliers();
                      System.out.println("Which supplier do you want to edit");
                      Ename=input.next();
-                     supplier.editSupplier(Ename);
+                     System.out.println("Enter supplier password:");
+                     Epass=input.next();
+                     admin.editSupplier(Ename,Epass);
                      break;
                      
                 case 16:
                     //View Supplier Orders
-                     String Vname;
+                        String Vname;
                      System.out.println("Which supplier do you want to view their order");
                      Vname=input.next();
-                     supplier.SupplierOrders(Vname);
+                     admin.displayOrders(Vname);
                     
                     break;
                 case 17: 
 
                     // View Total Revenue 
-
+                      Borrower brower=new Borrower();
+         List<User> user=brower.readFromFile(); 
                     System.out.println("Total Revenue: " + admin.getTotalRevenue()); 
 
                     break; 
@@ -660,6 +836,8 @@ input.nextLine();
                 case 18: 
 
                     // View Average Revenue 
+                     Borrower browerer=new Borrower();
+                       List<User> r=browerer.readFromFile(); 
 
                     System.out.println("Average Revenue: " + admin.getAverageRevenue()); 
 
@@ -670,19 +848,20 @@ input.nextLine();
                 case 19: 
 
                     // View Supplier with Max Orders 
-
-                    System.out.println("Supplier with Max Orders: " + admin.getSupplierWithMaxOrders()); 
-
+                            System.out.println("Supplier with Max Revenue: " ); 
+                   admin.SmaxOrders();
                     break; 
+
+                
 
   
 
                 case 20: 
 
                     // View Supplier with Max Revenue 
-
-                    System.out.println("Supplier with Max Revenue: " + admin.getSupplierWithMaxRevenue()); 
-
+  
+                      System.out.println("Supplier with Max Orders: " ); 
+                    admin.SmaxRevenue();
                     break; 
 case 21:
     
@@ -692,21 +871,12 @@ case 21:
                     for(User i:u)
                     {
                         
-                         admin.specifyBorrowingTermDetails(i); 
+//                         admin.specifyBorrowingTermDetails(i); 
                     }
                     break;
                         
 case 22:
-    
-    System.out.println("Enter the name of the new user:");
-        String Names = input.next();
-
-        System.out.println("Enter the password for the new user:");
-        String Password = input.next();
-        
-        admin.addAdmin(Names, Password);
-        admin.saveAllAdminsToFile();
-        System.out.println("User added successfully.");
+  //view all borrowers
             break;
            
                 case 23:
@@ -718,7 +888,7 @@ case 22:
                 break;
             
         } 
-        }while (choice != 23);
+        }while (choose != 23);
                   }
   }
          }
