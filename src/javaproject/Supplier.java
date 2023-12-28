@@ -110,7 +110,7 @@ public void receiveOrder(Book book, int numberOfCopies) {
                     
 
                 totalCost += (price * numberOfCopies);
-               Admin.setOrderId(Admin.getOrderId()+1);
+               Librarian.setOrderId(Librarian.getOrderId()+1);
                 saveSupplierInfo();
                 break;
             }
