@@ -1,38 +1,46 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package javaproject;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class Supplier extends User {
-    private String Sname;
-    private String password;
+    private String sName;
+    private static int contactInfo;
     private static int numOfOrders;
+
+    public  void setNumOfOrders(int numOfOrders) {
+        Supplier.numOfOrders = numOfOrders;
+    }
     private static double totalRevenue;
-    private ArrayList<Object> bookInfo = new ArrayList<>();
-    public Supplier(String name, String password) {
-        this.Sname = name;
-        this.password = password;
+
+    public Supplier(String name, int contactInfo) {
+        this.sName = name;
+        this.contactInfo = contactInfo;
+        setScontactInfo(contactInfo);
         this.totalRevenue = 0.0;
         this.numOfOrders = 0;
+        //settingPrices();
     }
 
-    public void setSName(String Sname) {
-        this.Sname = Sname;
+    public void setSTotalRevenue(double totalRevenue) {
+        Supplier.totalRevenue = totalRevenue;
     }
 
-    public void setSPassword(String password) {
-        this.password = password;
+    public void setSName(String sName) {
+        this.sName = sName;
+    }
+
+    public void setScontactInfo(int contactInfo) {
+        this.contactInfo = contactInfo;
     }
 
     public Supplier(String name) {
-        this.Sname = name;
+ 
+       this.sName = name;
+        this.contactInfo =getScontactInfo();
+
+      //  settingPrices();
+
     }
 
     public static int getSNumberOfOrders() {
@@ -40,11 +48,11 @@ class Supplier extends User {
     }
 
     public String getSName() {
-        return Sname;
+        return sName;
     }
 
-    public String getSPassword() {
-        return password;
+    public static int getScontactInfo() {
+        return contactInfo;
     }
 
     public double getSTotalRevenue() {
@@ -55,105 +63,149 @@ class Supplier extends User {
         return numOfOrders;
     }
 
-    public void receiveOrder(String bookTitle, int numberOfCopies) {
-        double finalPrice = -1;            if(searchBook(bookTitle)){
-         String fileName="C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+Sname + "_Prices.txt";
-               try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains(bookTitle)) {
-                    // Assuming the price is a double value in the line
-                    String[] parts = line.split("\t"); // Assuming values are tab-separated, adjust accordingly
-                    if (parts.length >= 2) {
-                        finalPrice=  Double.parseDouble(parts[1]);
-                    }
-                }
-            }
-             } catch (IOException | NumberFormatException e) {
-            System.out.println("Error reading file or parsing price: " + e.getMessage());
-        }}
-        if(finalPrice!=-1){
-        double orderTotal = finalPrice * numberOfCopies;
-        totalRevenue =totalRevenue+ orderTotal;
-        numOfOrders++;
-        
-       
-        saveSupplierInfo();
-              System.out.println("Order placed successfully!");
-
+    public boolean searchBook(String title) {
+        boolean found = false;
+        if (Book.searchBook(title) != null) {
+            found = true;
         }
-        else{
-        System.out.println("book not found");
-        }
-
+        return found;
     }
+public void displayPrices(){
+        String pricesFileName =  "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+sName + "_Prices.dat";
 
-    public void settingPrices() {
-        try (FileWriter writer = new FileWriter("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + Sname + "_Prices.txt")) {
+    try (DataInputStream pricesInputStream = new DataInputStream(new FileInputStream(pricesFileName));
+               RandomAccessFile raf = new RandomAccessFile(pricesFileName, "r")) {
+
+        while (pricesInputStream.available() > 0) {
+                String title = readString(raf);
+                String  author = readString(raf);
+                String  category = readString(raf);
+          //  String storedBookTitle = pricesInputStream.readUTF().trim(); 
+                            double price = raf.readDouble();
+
+                System.out.println("Title: " + title+"\t\tAuthor: "+author +"\tCategory: "+category+ "\tPrice: " + price+"$");}} catch (IOException e) {
+           // System.err.println("Error reading file2: " + e.getMessage());
+        }}
+public void receiveOrder(Book book, int numberOfCopies) {
+                  //  settingPrices();
+   //totalRevenue=0;
+    double totalCost = 0.0;
+   // if(Admin.searchSupplier( sName)){
+    String pricesFileName =  "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+sName + "_Prices.dat";
+    String infoFileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+ sName + "_info.dat";
+
+    try (DataInputStream pricesInputStream = new DataInputStream(new FileInputStream(pricesFileName));
+               RandomAccessFile raf = new RandomAccessFile(pricesFileName, "r")) {
+
+        while (pricesInputStream.available() > 0) {
+                String title = readString(raf);
+                String  author = readString(raf);
+                String  category = readString(raf);
+            String storedBookTitle = pricesInputStream.readUTF().trim(); 
+                            double price = raf.readDouble();
+
+             //   System.out.println("Title: " + title+"\t\tAuthor: "+author +"\tCategory: "+category+ "\tPrice: " + price+"$");
+
+                   if (storedBookTitle.equals(book.getTitle().trim())) {
+                    
+
+                totalCost += (price * numberOfCopies);
+               Admin.setOrderId(Admin.getOrderId()+1);
+                saveSupplierInfo();
+                break;
+            }
+        }} catch (IOException e) {
+            System.err.println("Error reading file2: " + e.getMessage());
+        }
+   totalRevenue=totalRevenue+totalCost;
+   setSTotalRevenue(totalRevenue);
+     // setSTotalRevenue(getSTotalRevenue() +totalCost) ;
+     // System.out.println(totalRevenue);
+                numOfOrders++;
+                setNumOfOrders(numOfOrders);
+}
+
+    public void  settingPrices() {
+        String fileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + sName + "_Prices.dat";
+        try (RandomAccessFile raf = new RandomAccessFile(fileName, "rw")) {
             for (int i = 0; i < Book.getBooks().size(); i++) {
-                writer.write(Book.getBooks().get(i) + "\t" + (Math.random() * (41) + 10) + "\n");
+                Book book = Book.getBooks().get(i);
+                double price = Math.random() * (41) + 10;
+                writeString(raf, book.getTitle()+"\t");
+                writeString(raf, book.getAuthor()+"\t");
+                writeString(raf, book.getCategory()+"\t");
+
+                raf.writeDouble(price);
             }
         } catch (IOException e) {
-            System.out.println("Error saving orders to file: " + e.getMessage());
+            System.out.println("Error saving prices to file: " + e.getMessage());
         }
     }
 
     public void displayBooks() {
-        String FileName = Sname + "_Prices.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+        String fileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + sName + "_Prices.dat";
+        try (RandomAccessFile raf = new RandomAccessFile(fileName, "rw")) {
+            while (raf.getFilePointer() < raf.length()) {
+                String title = readString(raf);
+                double price = raf.readDouble();
+                System.out.println("Title: " + title + "\tPrice: " + price+" $");
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.err.println("Error reading file5: " + e.getMessage());
         }
     }
 
+
     public void displayOrders() {
-        String FileName = Sname + "_Orders.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+        String ordersFileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + sName + "_Orders.dat";
+
+        try (RandomAccessFile raf = new RandomAccessFile(ordersFileName, "r")) {
+            while (raf.getFilePointer() < raf.length()) {
+                String orderInfo = raf.readUTF();
+                System.out.println(orderInfo);
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.out.println("Error displaying orders: " + e.getMessage());
         }
-    }
     
-    public void displayPrices() {
-        String FileName = Sname + "_Prices.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
+
+    }
+
+    public void displaySupplierInfo() {
+        String infoFileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" +getSName() + "_Info.dat";
+
+        try (DataInputStream infoInputStream = new DataInputStream(new FileInputStream(infoFileName))) {
+         
+            System.out.println("Name: " + sName);
+            System.out.println("Contact Info: " + getScontactInfo());
+            System.out.println("Total Revenue: " + totalRevenue);
+            System.out.println("Number of Orders: " + numOfOrders);
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.out.println("Error displaying supplier information: " + e.getMessage());
         }
     }
 
     public void saveSupplierInfo() {
-        String fileName = Sname + "_Info.txt";
-        try (FileWriter writer = new FileWriter("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + fileName)) {
-            writer.write("Name: " + Sname + "\nPassword: " + password + "\nRevenue:" + totalRevenue + " \nNumber Of Orders:" + numOfOrders + "\n");
+        settingPrices();
+           try (RandomAccessFile raf = new RandomAccessFile( "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+getSName() + "_info.dat", "rw")) {
+            raf.seek(raf.length());
+
+            raf.writeUTF( "name: "+ sName+"\tcontactinfo: " + contactInfo + "\trevenue: "+totalRevenue+"\tnumoforders: " + numOfOrders+"\n");
         } catch (IOException e) {
-            System.out.println("Error saving suppliers to file: " + e.getMessage());
+            System.err.println("Error reading file1: " + e.getMessage());
         }
+            
     }
 
+    private void writeString(RandomAccessFile raf, String value) throws IOException {
+        raf.writeUTF(value);
+    }
 
-
- 
-     public boolean searchBook(String title) {
-      
-        boolean found = false;
-      
-            if (Book.searchBook(title) != null) {
-                found = true;
-            }
-        
-        return found;
+    private String readString(RandomAccessFile raf) throws IOException {
+        return raf.readUTF();
+    }
+    public void edit(){
+this.totalRevenue=getSTotalRevenue();  
+this.numOfOrders=getNumberOfOrders();
     }
 }
