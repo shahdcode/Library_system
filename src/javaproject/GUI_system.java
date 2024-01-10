@@ -3,174 +3,253 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMain.java to edit this template
  */
 package javaproject;
-
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
-import javafx.scene.layout.Background;
+import javafx.geometry.Pos;
+import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.PasswordField;
-import javafx.stage.StageStyle;
-import javafx.scene.layout.VBox;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.shape.Rectangle;
-
+import javafx.scene.layout.*;
+import javafx.scene.text.*;
+import javafx.stage.Stage;
+import javafx.scene.paint.*;
+import javafx.scene.effect.*;
+import javafx.collections.*;
+import java.util.*;
+import java.io.*;
+import javafx.scene.shape.*;
 
 
 
 
 public class GUI_system extends Application {
+    //HALA 
+     static ArrayList<String> borrowers = new ArrayList<>();
+    static ArrayList<String> admins = new ArrayList<>();
+    static ArrayList<String> librarians = new ArrayList<>();
+
+public static void signUp(int usertype, String username,String password){
+    try{
+        ObjectOutputStream out;
+        switch (usertype){
+            case 1:
+                //borrower
+                borrowers.add(username+","+password);
+               out= new ObjectOutputStream (new FileOutputStream("borrowers.bin",true));
+               out.writeObject(borrowers);
+               out.close();
+               break;
+               
+            case 2:
+                //librarian
+                librarians.add(username+","+password);
+                 out= new ObjectOutputStream (new FileOutputStream("librarians.bin",true));
+               out.writeObject(librarians);
+               out.close();
+               break;
+            
+            case 3:
+                //admins
+                admins.add(username+","+password);
+                 out= new ObjectOutputStream (new FileOutputStream("librarians.bin",true));
+               out.writeObject(admins);
+               out.close();
+               break;
+            default:
+                System.out.println("user type incorrect.");
+                return;
+            
+        }
+        
+        System.out.println("user successfully signed up");
+        
+        
+        
+    }catch(IOException e){
+        e.printStackTrace();
+    }
+    
+}
+public static void signIn(int usertype, String username,String password){
+    try{
+        ObjectInputStream in;
+        switch(usertype){
+            case 1:
+                //borrower
+                in= new ObjectInputStream(new FileInputStream("borrowers.bin"));
+                borrowers=(ArrayList<String>)in.readObject();
+                for(String user: borrowers){
+                    
+                    String[] parts= user.split(",");
+                    if (parts[0].equalsIgnoreCase(username)&& parts[1].equals(password)){
+                        System.out.println("Borrower username and password correct");
+                        return;
+                        
+                    }
+                    
+                }
+                //kanet fo2 el for loop
+                in.close();
+                break;
+            case 2:
+                //librarians
+                in= new ObjectInputStream(new FileInputStream("librarians.bin"));
+                librarians=(ArrayList<String>)in.readObject();
+                for(String user: librarians){
+                    
+                    String[] parts= user.split(",");
+                    if (parts[0].equalsIgnoreCase(username)&& parts[1].equals(password)){
+                        System.out.println("librarian username and password correct");
+                        return;
+                        
+                    }
+                    
+                }
+                //kanet fo2 el for loop
+                in.close();
+                break;
+            
+            case 3:
+                //admins
+                in= new ObjectInputStream(new FileInputStream("admins.bin"));
+                admins=(ArrayList<String>)in.readObject();
+                for(String user: admins){
+                    
+                    String[] parts= user.split(",");
+                    if (parts[0].equalsIgnoreCase(username)&& parts[1].equals(password)){
+                        System.out.println("admin username and password correct");
+                        return;
+                        
+                    }
+                    
+                }
+                //kanet fo2 el for loop
+                in.close();
+                break;
+            
+            
+            default:
+            System.out.println("user type incorrect.");
+                return;
+        }
+        System.out.println("incorrect username or password");
+            
+            
+            
+            
+            
+            
+        }catch(IOException | ClassNotFoundException e){
+            e.printStackTrace();
+        
+        
+    }
+}
+public static void displayArraylists(){
+    try{
+        System.out.println("Borrowers: ");
+        for(String borrower: borrowers){
+            System.out.println(borrower);
+        }
+        System.out.println("\nLibrarians: ");
+        for(String librarian: librarians){
+            System.out.println(librarian);
+        }
+        System.out.println("\nAdmins: ");
+        for(String admin: admins){
+            System.out.println(admin);
+        }
+        
+        
+        
+    }catch(Exception e){
+         System.out.println("an error occurred while displaying the arraylists");
+        e.printStackTrace();
+    }
+    
+    
+}
+    
+    
+    
     Stage window;
     @Override
     public void start(Stage primaryStage) {
         
-        //awel stage hatban:
-        window=primaryStage;
-        Label Welcomelabel=new Label("Welcome user");
-        VBox welcomelayout= new VBox(20,Welcomelabel);
-        welcomelayout.setAlignment(Pos.CENTER);
-        Scene welcomescene=new Scene(welcomelayout,550,380);
+       Button borrowerbtn = new Button("BORROWER");
+        Button librarianbtn = new Button("LIBRARIAN");
+        Button adminbtn = new Button("ADMIN");
         
-        //back stage
-        Label libraryLabel=new Label("Helo please choose how u want to sign in");
-        VBox librarylayout= new VBox(20,libraryLabel);
-        librarylayout.setAlignment(Pos.CENTER);
-        Scene libraryScene= new Scene(librarylayout,550,380);
-        //Image
-        Image image= new Image("file:D:/Desktop/Univeristy/Semester 3/OOP/user.png");
-      //  ""
-        ImageView imageView= new ImageView(image);
-        imageView.setFitWidth(100);
-        imageView.setPreserveRatio(true);
+        borrowerbtn.setStyle("-fx-background-color: #044669;-fx-text-fill:#ffffff;-fx-min-width: 100;-fx-min-height:50;");
+        librarianbtn.setStyle("-fx-background-color: #044669;-fx-text-fill:#ffffff;-fx-min-width: 100;-fx-min-height:50;");
+        adminbtn.setStyle("-fx-background-color: #044669;-fx-text-fill:#ffffff;-fx-min-width: 100;-fx-min-height:50;");
         
-        //Button code
-       Button back=new Button("Back");
-       Button bt1= new Button("Sign in");
-       Button bt2=new Button("Sign up");
-       
-       //button appearance
-       
-      Color color=Color.web("#F19EB0");
-      BackgroundFill backgroundfill= new BackgroundFill(color,CornerRadii.EMPTY,Insets.EMPTY);
-      back.setBackground(new Background(backgroundfill));
-      back.setTextFill(Color.WHITE);
-      bt1.setBackground(new Background(backgroundfill));
-      bt1.setTextFill(Color.WHITE);
-      bt2.setBackground(new Background(backgroundfill));
-      bt2.setTextFill(Color.WHITE);
+        Text text=  new Text("What would you like to enter as:");
+        text.setFill(Color.rgb(4, 70, 105));
+        text.setFont(new Font("Verdana",21));
+        text.setStyle("-fx-background-color:#ffffff; -fx-padding:10;");
+        
+        Text underline = new Text ("__________________________");
+        underline.setFill(Color.rgb(204,204,204));
+        underline.setFont(new Font("Verdana",21));
+        underline.setStyle("-fx-background-color:#ffffff; -fx-padding:10;");
       
-      //Button effect 3a4an menrfezani
-      DropShadow shadow= new DropShadow();
-      bt1.setOnMousePressed(e->bt1.setEffect(shadow));
-      bt1.setOnMouseReleased(e->bt1.setEffect(null));
-      bt2.setOnMousePressed(e->bt2.setEffect(shadow));
-      bt2.setOnMouseReleased(e->bt2.setEffect(null));
-      back.setOnMousePressed(e->back.setEffect(shadow));
-      back.setOnMouseReleased(e->back.setEffect(null));
-      //Button alignment
-       HBox buttonbox=new HBox(15,back,bt1,bt2);
-       buttonbox.setAlignment(Pos.CENTER);
+// Image image = new Image("C:\\Users\\DELL\\Downloads\\white-pattern-priano-vines-blue-leaves-wallpaper.jpeg");
+       // BackgroundImage backgroundimage= new BackgroundImage(image,BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT,BackgroundSize.DEFAULT);
+        borrowerbtn.setOnAction(event->{System.out.println("borrower selected");
+                setEntryType(1);
+                });
+        librarianbtn.setOnAction(event->{System.out.println("librarian selected");
+                setEntryType(2);
+                });
+             
+        adminbtn.setOnAction(event->{System.out.println("admin selected");
+                setEntryType(3);
+                });    
+           VBox textbox= new VBox(text,underline);
+           
+        
+        GridPane roothala = new GridPane();
+        roothala.setStyle("-fx-background-color:#ffffff;");
+        
+        roothala.setHgap(50);
+        roothala.setVgap(50);
+        
+        roothala.setAlignment(Pos.CENTER);
        
-       
-       //label
-        Label l1=new Label("Name:");
-        Label l2=new Label("Password");
         
-       //set on action lel button (sign  in and up code)
-       SIGN sign=new SIGN();
-       bt1.setOnAction(e->{
-       sign.signIn(1, l1.getText(),l2.getText());
-       window.setScene(welcomescene); //haro7 le next scene
-       });
-       
-        bt2.setOnAction(e->{
-       sign.signUp(1, l1.getText(),l2.getText());
-        window.setScene(welcomescene); //haro7 le next scene
-        });
+        roothala.add(textbox,0,0,3,1);
+       // roothala.add(underline,0,0,3,1);
+        roothala.add(borrowerbtn,0,1);
+        roothala.add(librarianbtn,1,1);
+        roothala.add(adminbtn,2,1); 
         
-        
-        //button wedeni next scene
-      
-       back.setOnAction(e->window.setScene(libraryScene));
-       
-       
-        //Label alignment
-        VBox vbox= new VBox(15,l1,l2);
-        vbox.setAlignment(Pos.CENTER);
-        
-        
-        //Text field
-         TextField tf1=new TextField ();
-         PasswordField password= new PasswordField();
-         
-         //text field alignemnt
-        VBox text= new VBox(15,tf1,password);
-        text.setAlignment(Pos.CENTER);
-        
-        //Hbox
-        HBox h= new HBox(25,vbox,text);
-        h.setAlignment(Pos.CENTER);
-        
-        //Rectangle for desgin
-        
-        Rectangle sqaure= new Rectangle();
-        sqaure.setWidth(270);
-        sqaure.setHeight(270);
-        sqaure.setFill(Color.WHITE);
-       
-        //create stackpane for the layout
-        StackPane stackpane= new StackPane();
-        
-        //Vbox to hold el button b ba2i el vbox
-        VBox vboxall= new VBox(25,imageView,h,buttonbox);
-        stackpane.getChildren().addAll(sqaure,vboxall);
-        //vboxall.setStyle("-fx-background-color: #E3C6C0");
-        vboxall.setAlignment(Pos.CENTER);
-        
-        
-//        //stackpane & children
-//       StackPane stackpane= new StackPane();
-//        stackpane.getChildren().addAll(h,buttonbox);
-
-        
-        //create scene 
-       Scene scene = new Scene(stackpane, 550, 380);
-       scene.setFill(Color.TRANSPARENT);
-       
-       //Background fill
-//       Color fill=Color.web("#E3C6C080");
-//       BackgroundFill background_color=new BackgroundFill(fill,CornerRadii.EMPTY,Insets.EMPTY);
-//      Background background= new Background(background_color);
-//       vboxall.setBackground(background);
-
-
-        //Stage
-       // primaryStage.initStyle(StageStyle.TRANSPARENT);
+        Scene scenehala1 = new Scene(roothala, 300, 250);
         primaryStage.setTitle("Registration form");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(scenehala1);
         primaryStage.show();
     }
 
-    /**
-     * @param args the command line arguments
-     */
+   
     public static void main(String[] args) {
         launch(args);
     }
     
+    
+    //Method hala needs for first scene ------
+    private int entryType=0;
+
+    public void setEntryType(int entryType) {
+        this.entryType = entryType;
+    }
+
+    public int getEntryType() {
+        return entryType;
+    }
+    //------------
 }
