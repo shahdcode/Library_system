@@ -3,70 +3,132 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMain.java to edit this template
  */
 package javaproject;
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.scene.paint.*;
-import javafx.scene.effect.*;
-import javafx.collections.*;
+import javafx.scene.text.*;
+import javafx.scene.image.*;
 import java.util.*;
 import java.io.*;
-import javafx.scene.shape.*;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.ArrayList;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
 
-
-
-public class GUI_system extends Application {
-    //HALA 
-     static ArrayList<String> borrowers = new ArrayList<>();
+public class learning_gui extends Application {
+static ArrayList<String> borrowers = new ArrayList<>();
     static ArrayList<String> admins = new ArrayList<>();
     static ArrayList<String> librarians = new ArrayList<>();
+private static  Text errorText= new Text ();
+        
 
 public static void signUp(int usertype, String username,String password){
-    try{
-        ObjectOutputStream out;
+    
+    
+    String encusername=encrypt(username);
+    String encpassword=encrypt(password);
+    
+    
+    String user;
+    
+        //ObjectOutputStream out;
+        try{
+            RandomAccessFile raf;
         switch (usertype){
             case 1:
                 //borrower
-                borrowers.add(username+","+password);
-               out= new ObjectOutputStream (new FileOutputStream("borrowers.bin",true));
-               out.writeObject(borrowers);
-               out.close();
+                borrowers.add(encusername+","+encpassword);
+               //out= new ObjectOutputStream (new FileOutputStream("borrowers.bin",true));
+              // out.writeObject(borrowers);
+               //out.close();
+                raf = new RandomAccessFile("borrowers.bin","rw");
+                while((user= raf.readLine())!=null){
+                    
+                    String[] parts = user.split(",");
+                if(parts[0].equalsIgnoreCase(encusername)){
+                    System.out.println("this user already exists");
+                    errorText.setText("this user already exists");
+                    errorText.setFill(Color.GOLD);
+                    return;
+                }
+                }
+                raf.seek(raf.length());
+                raf.writeBytes(encusername+","+encpassword);
+               // raf.writeBytes(System.getProperty("lineSeperator"));
+                raf.writeBytes("\n");
+                raf.close();
+                
                break;
                
             case 2:
                 //librarian
-                librarians.add(username+","+password);
-                 out= new ObjectOutputStream (new FileOutputStream("librarians.bin",true));
-               out.writeObject(librarians);
-               out.close();
+                librarians.add(encusername+","+encpassword);
+//                out= new ObjectOutputStream (new FileOutputStream("librarians.bin",true));
+//               out.writeObject(librarians);
+//               out.close();
+                raf = new RandomAccessFile("librarians.bin","rw");
+                while((user= raf.readLine())!=null){
+                    
+                    String[] parts = user.split(",");
+                if(parts[0].equalsIgnoreCase(encusername)){
+                    System.out.println("this user already exists");
+                     errorText.setText("this user already exists");
+                    errorText.setFill(Color.GOLD);
+                    return;
+                }
+                }
+                raf.seek(raf.length());
+                raf.writeBytes(encusername+","+encpassword);
+                //raf.writeBytes(System.getProperty("lineSeperator"));
+                raf.writeBytes("\n");
+                raf.close();
+                
                break;
             
             case 3:
                 //admins
-                admins.add(username+","+password);
-                 out= new ObjectOutputStream (new FileOutputStream("librarians.bin",true));
-               out.writeObject(admins);
-               out.close();
+                admins.add(encusername+","+encpassword);
+//                 out= new ObjectOutputStream (new FileOutputStream("librarians.bin",true));
+//               out.writeObject(admins);
+//               out.close();
+                raf = new RandomAccessFile("admins.bin","rw");
+                while((user= raf.readLine())!=null){
+                    
+                    String[] parts = user.split(",");
+                if(parts[0].equalsIgnoreCase(encusername)){
+                    System.out.println("this user already exists");
+                    errorText.setText("this user already exists");
+                    errorText.setFill(Color.GOLD);
+                    return;
+                }
+                }
+                raf.seek(raf.length());
+                raf.writeBytes(encusername+","+encpassword);
+               // raf.writeBytes(System.getProperty("lineSeperator"));
+                raf.writeBytes("\n");
+                raf.close();
+                
                break;
             default:
                 System.out.println("user type incorrect.");
+                 errorText.setText("Please enter username & pass!!");
+                  errorText.setFill(Color.MAROON);
                 return;
             
         }
         
         System.out.println("user successfully signed up");
+        
         
         
         
@@ -76,65 +138,74 @@ public static void signUp(int usertype, String username,String password){
     
 }
 public static void signIn(int usertype, String username,String password){
+     String encusername=encrypt(username);
+    String encpassword=encrypt(password);
+    
     try{
-        ObjectInputStream in;
+       // ObjectInputStream in;
+      // Boolean found = false;
+      RandomAccessFile raf;
+      String user;
         switch(usertype){
             case 1:
                 //borrower
-                in= new ObjectInputStream(new FileInputStream("borrowers.bin"));
-                borrowers=(ArrayList<String>)in.readObject();
-                for(String user: borrowers){
-                    
-                    String[] parts= user.split(",");
-                    if (parts[0].equalsIgnoreCase(username)&& parts[1].equals(password)){
+               // in= new ObjectInputStream(new FileInputStream("borrowers.bin"));
+                
+               // borrowers=(ArrayList<String>)raf.readObject();
+                raf = new RandomAccessFile("borrowers.bin","r");
+                while((user= raf.readLine())!= null){
+                     String[] parts= user.split(",");
+                     if (parts[0].equalsIgnoreCase(encusername)&& parts[1].equals(encpassword)){
                         System.out.println("Borrower username and password correct");
-                        return;
+                        
+                       return;
                         
                     }
-                    
                 }
+              
                 //kanet fo2 el for loop
-                in.close();
+                raf.close();
                 break;
             case 2:
                 //librarians
-                in= new ObjectInputStream(new FileInputStream("librarians.bin"));
-                librarians=(ArrayList<String>)in.readObject();
-                for(String user: librarians){
-                    
-                    String[] parts= user.split(",");
-                    if (parts[0].equalsIgnoreCase(username)&& parts[1].equals(password)){
-                        System.out.println("librarian username and password correct");
-                        return;
+                //in= new ObjectInputStream(new FileInputStream("librarians.bin"));
+               // librarians=(ArrayList<String>)in.readObject();
+                raf = new RandomAccessFile("librarians.bin","r");
+                while((user= raf.readLine())!= null){
+                     String[] parts= user.split(",");
+                     if (parts[0].equalsIgnoreCase(encusername)&& parts[1].equals(encpassword)){
+                        System.out.println("Borrower username and password correct");
+                       return;
                         
                     }
-                    
                 }
                 //kanet fo2 el for loop
-                in.close();
+                raf.close();
                 break;
             
             case 3:
                 //admins
-                in= new ObjectInputStream(new FileInputStream("admins.bin"));
-                admins=(ArrayList<String>)in.readObject();
-                for(String user: admins){
-                    
-                    String[] parts= user.split(",");
-                    if (parts[0].equalsIgnoreCase(username)&& parts[1].equals(password)){
-                        System.out.println("admin username and password correct");
-                        return;
+               // in= new ObjectInputStream(new FileInputStream("admins.bin"));
+               // admins=(ArrayList<String>)in.readObject();
+                raf = new RandomAccessFile("admins.bin","r");
+                while((user= raf.readLine())!= null){
+                     String[] parts= user.split(",");
+                     if (parts[0].equalsIgnoreCase(encusername)&& parts[1].equals(encpassword)){
+                        System.out.println("Borrower username and password correct");
+                       return;
                         
                     }
-                    
                 }
                 //kanet fo2 el for loop
-                in.close();
+                raf.close();
                 break;
             
             
             default:
             System.out.println("user type incorrect.");
+             errorText.setText("Please enter username & pass!!");
+                    errorText.setFill(Color.MAROON);
+            
                 return;
         }
         System.out.println("incorrect username or password");
@@ -144,44 +215,140 @@ public static void signIn(int usertype, String username,String password){
             
             
             
-        }catch(IOException | ClassNotFoundException e){
+        }catch(IOException e){
             e.printStackTrace();
         
         
     }
 }
-public static void displayArraylists(){
-    try{
-        System.out.println("Borrowers: ");
-        for(String borrower: borrowers){
-            System.out.println(borrower);
-        }
-        System.out.println("\nLibrarians: ");
-        for(String librarian: librarians){
-            System.out.println(librarian);
-        }
-        System.out.println("\nAdmins: ");
-        for(String admin: admins){
-            System.out.println(admin);
-        }
+ public static String encrypt(String input){
+     
+     StringBuilder output = new StringBuilder();
+     for (char c : input.toCharArray()){
+         output.append((char)(c+1));
+        
+     }
+     return output.toString();
+     
+     
+     
+ }
+    
+     @Override
+    public void start(Stage stage) {
+        //SCENES USED
         
         
+        //SCENE SHAHD ----------------------------------------------(tani scene)
+        HBox root = new HBox();
+
+        // Left Side
+        VBox leftSide = new VBox();
+        leftSide.setMinWidth(290);
+        leftSide.setStyle("-fx-background-color: #044669;");
+
+        //7oti el image path
+        Image image= new Image("file:D:/Desktop/Univeristy/Semester 3/OOP/books.png");
+        ImageView imageView= new ImageView(image);
         
-    }catch(Exception e){
-         System.out.println("an error occurred while displaying the arraylists");
-        e.printStackTrace();
-    }
-    
-    
-}
-    
-    
-    
-    Stage window;
-    @Override
-    public void start(Stage primaryStage) {
+        //image properties
+        imageView.setFitWidth(180);
+        imageView.setPreserveRatio(true);
         
-       Button borrowerbtn = new Button("BORROWER");
+        //a7ot el sora fel nos 
+        leftSide.setAlignment(Pos.CENTER);
+        leftSide.getChildren().add(imageView);
+        HBox.setMargin(imageView, new Insets(20,0,0,65));
+        
+        // Right Side (label vbox)
+        VBox labelVbox= new VBox(10);
+        labelVbox.setAlignment(Pos.CENTER);
+        Label welcomeLabel= new Label("Welcome");
+        welcomeLabel.setFont(new Font("Impact",40));
+        Label accessLabel = new Label("Access your account");
+        accessLabel.setFont(new Font("Verdana",20));
+        Label createacclabel = new Label("or create an account");
+        labelVbox.getChildren().addAll(welcomeLabel,accessLabel);
+        
+        
+        //right Side (textField vbox)
+        VBox textfieldVbox = new VBox(10);
+        textfieldVbox.setAlignment(Pos.CENTER_RIGHT);
+        TextField usernameField = new TextField();
+        usernameField.setPrefWidth(200);
+        usernameField.setPromptText("Username");
+
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPrefWidth(200);
+        passwordField.setPromptText("Password");
+        
+        textfieldVbox.getChildren().addAll(usernameField,passwordField);
+        //error text lama el password/usernmae yeb2o galat
+       
+        
+        
+        //spaces between el 7aga el kol vbox (el sabab el 5alani afsl)
+        labelVbox.setSpacing(10);
+        textfieldVbox.setSpacing(38);
+         
+        //join el right side fe one vbox 3a4an yeb2o ta7t ba3d
+        VBox rightSide= new VBox();
+        rightSide.setPadding(new Insets(20));
+        rightSide.setSpacing(50);
+        
+        //buttons bel handle bet3ha 
+        
+        Button Sign_inButton = new Button("Sign in");
+        Sign_inButton.setOnAction(e->{
+             String username= usernameField.getText();
+             String password= passwordField.getText();
+             
+//             int userType= 1; //me7taga code hala hena
+             //boolean authentication=signIn(getEntryType(), username, password);
+             signIn(getEntryType(), username, password);
+//             if(!authentication){
+//                 errorText.setText("*Username is not found please create account");
+//             }else{
+//                 errorText.setText("");
+//             }
+        });
+        
+        
+        Button Sign_upButton = new Button("Sign up");
+        Sign_upButton.setOnAction(e->{
+            String username= usernameField.getText();
+            String password= passwordField.getText();
+            
+//            int userType= 1; //me7taga code hala hena
+           //  boolean authentication=signUp(getEntryType(), username, password);
+           signUp(getEntryType(), username, password);
+//             if(!authentication){
+//                 errorText.setText("*Incorrect username or password");
+//             }else{
+//                 errorText.setText("");
+//             }
+        });
+        
+        
+        Button sign_backButton = new Button("Back"); //handled fe scene hala (ba3d this scene)
+        HBox buttons= new HBox();
+        buttons.getChildren().addAll(Sign_inButton,Sign_upButton,sign_backButton);
+        buttons.setSpacing(20);
+        buttons.setAlignment(Pos.CENTER);
+       
+        rightSide.getChildren().addAll(labelVbox,textfieldVbox,errorText, buttons);
+        
+        //spacing between el vbox, hay7t fe hbox
+        HBox.setMargin(rightSide, new Insets(20,0,0,65));
+        root.getChildren().addAll(leftSide, rightSide);
+       //----------------------------------------------END OF SHAHD
+       
+        Scene Sign_details_Scene = new Scene(root, 700, 450);
+        
+        
+        //SCENE HALA ------------------------------- (awl scene)
+        
+        Button borrowerbtn = new Button("BORROWER");
         Button librarianbtn = new Button("LIBRARIAN");
         Button adminbtn = new Button("ADMIN");
         
@@ -202,13 +369,19 @@ public static void displayArraylists(){
 // Image image = new Image("C:\\Users\\DELL\\Downloads\\white-pattern-priano-vines-blue-leaves-wallpaper.jpeg");
        // BackgroundImage backgroundimage= new BackgroundImage(image,BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT,BackgroundSize.DEFAULT);
         borrowerbtn.setOnAction(event->{System.out.println("borrower selected");
-                setEntryType(1);
+               stage.setScene(Sign_details_Scene);
+               stage.setTitle("Borrower - Sign in/up");
+               setEntryType(1);
                 });
         librarianbtn.setOnAction(event->{System.out.println("librarian selected");
+                stage.setScene(Sign_details_Scene);
+                stage.setTitle("Librarian - Sign in/up");
                 setEntryType(2);
                 });
              
         adminbtn.setOnAction(event->{System.out.println("admin selected");
+                stage.setScene(Sign_details_Scene);
+                stage.setTitle("Admin - Sign in/up");
                 setEntryType(3);
                 });    
            VBox textbox= new VBox(text,underline);
@@ -229,19 +402,27 @@ public static void displayArraylists(){
         roothala.add(librarianbtn,1,1);
         roothala.add(adminbtn,2,1); 
         
-        Scene scenehala1 = new Scene(roothala, 300, 250);
-        primaryStage.setTitle("Registration form");
-        primaryStage.setScene(scenehala1);
-        primaryStage.show();
+        Scene scenehala1 = new Scene(roothala, 500, 250);
+       
+        stage.setScene(scenehala1);
+        //---------------------------------------------- END OF HALA
+        
+        //back button handled here (to return from scene2 to scene1
+        sign_backButton.setOnAction(e->{
+          stage.setScene(scenehala1);
+          stage.setTitle("Library");
+        });
+
+        //stage.setScene(Sign_details_Scene);
+        stage.setTitle("Library");
+        stage.show();
     }
 
-   
     public static void main(String[] args) {
         launch(args);
     }
     
-    
-    //Method hala needs for first scene ------
+     //Method hala needs for first scene ------
     private int entryType=0;
 
     public void setEntryType(int entryType) {
@@ -252,4 +433,10 @@ public static void displayArraylists(){
         return entryType;
     }
     //------------
+    
+    //SHAHD
+    
+//    private Scene signDetailsScene(Stage stage){
+//        
+//    }
 }
