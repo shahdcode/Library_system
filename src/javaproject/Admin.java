@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -286,59 +287,8 @@ public void editadmin( String old, String field, String newvalue) throws IOExcep
 //}
 //
 //}
- public void displaySuppliers() {
-           String FileName = "Suppliers.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-        }
-         
-    }
-  public void displaySupplierInfo(String name) {
-      
-           String FileName = name+"_Info.txt";
-           
-       if(searchFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\",FileName)){
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-        }}else{            System.out.println("Supplier not found.");
-}
-         
-    }
-        
-    public void displayOrders(String supplierName) {
-        String file=supplierName+"_Orders.txt";
-        Supplier supplier= new Supplier(supplierName) ;
-       if(searchFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\",file)){
-            supplier.displayOrders();
-        } else {
-            System.out.println("Supplier doesnt have orders.");
-        }
-    }
-      public void displayPrices(String supplierName) {
-        String file=supplierName+"_Prices.txt";
-        Supplier supplier= new Supplier(supplierName) ;
-       if(searchFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\",file)){
-            supplier.displayPrices();
-        }
-    }
-         public boolean isAvailable(String supplierName) {
-        String file=supplierName+"_Prices.txt";
-        boolean found =false;
-       if(searchFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\",file)){
-        found=true;
-       } 
-       return found;
-    }
+ 
+
          
  public List<User> searchAdmin(String field, String value) {
     List<User> results = new ArrayList<>();
@@ -548,408 +498,298 @@ public void specifyBorrowingTermDetails(User user) {
 
     
     //Mariam
-      public static boolean searchSupplier(String sName) {
-         for (int i=0;i<newSupplierList.size();i++) {
-         
-           if (newSupplierList.get(i).get(0).equals(sName))
-        {
-                return true;
-            }
-        }
-        return false;
-    }
-   public void addOrder(String supplierName, String bookTitle, int numberOfCopies) throws IOException {
-        Supplier supplier = new Supplier(supplierName);
-       
-        String FileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt";
-        if (searchNameInFile(FileName, supplierName)) {
-           
-            String fileName = supplierName + "_Orders.txt";
-            try (FileWriter writer = new FileWriter("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + fileName, true)) {
+      private ArrayList<String> supplierNames = new ArrayList<>();
+  
+    public void displaySuppliers() {
+        String fileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.dat";
 
-                writer.write("Book:" + bookTitle + "\tCopies:" + numberOfCopies + "\n");
+        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(fileName))) {
+            while (inputStream.available() > 0) {
+                String supplierName = inputStream.readUTF();
+                int contactInfo = inputStream.readInt();
+                String newLine = inputStream.readUTF();  
 
-            } catch (IOException e) {
-                System.out.println("Error saving suppliers to file: " + e.getMessage());
-            }} else {
-            System.out.println("Supplier not found.");
-        }
-        supplier.receiveOrder(bookTitle, numberOfCopies);
-    }
-    public void cancelOrder(String title,String name) throws IOException  {
-
-        ArrayList<String> updatedLines = new ArrayList<>();
-        boolean orderRemoved = false;
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + name+"_Orders.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Check if the line contains the word to remove
-                if (line.contains( title)) {
-                    // Remove the word from the line
-                    line = line.replace( line,"").trim();
-                    orderRemoved = true;
-                }
-                updatedLines.add(line);
+                System.out.println("Supplier Name: " + supplierName);
+                System.out.println("Contact Info: " + contactInfo);
+                System.out.println("\n");
             }
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+                        System.out.println(e);
+
         }
+    }
 
-        if (orderRemoved) {
-            try (FileWriter writer = new FileWriter("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + name+"_Orders.txt")) {
-                for (String updatedLine : updatedLines) {
-                    writer.write(updatedLine + System.lineSeparator());
-                }
-                System.out.println("Order removed successfully");
-            } catch (IOException e) {
-                System.out.println("Error writing to file: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Order not found");
-        }
-    } public void editSupplierFileContents(String name,String Password) {
-        // Implement the logic to edit file contents
-        Scanner sr = new Scanner(System.in);
-        Supplier newSupplier = new Supplier(name,Password);
-              int editValue;
-              
-              String newName;
 
-        do{
-             System.out.println("1:edit name.\n2:edit password\n0:Exit");
-             editValue=sr.nextInt();
-      if(editValue==1){
-             System.out.println("enter new name");
-            newName=sr.next();
-            newSupplier.setSName(newName);
-        try {
-       
-            File inputFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt");
-            File tempFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\tempFile.txt");
-          
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-            String currentLine;
-
-            while ((currentLine = reader.readLine()) != null) {
-                // Check if the line contains the search text
-                if (currentLine.contains(name)) {
-                    // Modify the line to replace oldName with newName
-                    currentLine = currentLine.replace(name, newName);
-                }
-                writer.write(currentLine + System.getProperty("line.separator"));
-            }
-
-            writer.close();
-            reader.close();
-               if (inputFile.delete()) {
-           
-                if (!tempFile.renameTo(inputFile)) {
-                    System.out.println("Error renaming the file.");
-                }
-            } else {
-                System.out.println("Error deleting the original file.");
-            }}catch (IOException e) {
-            System.out.println("Error reading or writing to the file: " + e.getMessage());
-        }
-         
-        try{
-            File infoFile= new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+name+"_Info.txt");
-            File infoNew= new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+newName+"_Info.txt");
-            File tempInfo = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\tempInfo.txt");
-            
-            BufferedReader reader0 = new BufferedReader(new FileReader(infoFile));
-            BufferedWriter writer0 = new BufferedWriter(new FileWriter(tempInfo));
-
-            String currentLine0;
-
-            while ((currentLine0 = reader0.readLine()) != null) {
-            if (currentLine0.contains("Name:")) {
-                    // Get the word next to "Name:" until the next space
-                    String[] parts = currentLine0.split("\\s+");
-                    if (parts.length > 1) {
-                        // Replace the word next to "Name:" with the new name
-                        currentLine0= currentLine0.replace(parts[1], newName);
-                       newSupplier.setSName(newName);
-                    }
-                }
-                writer0.write(currentLine0 + System.getProperty("line.separator"));
-            }
-
-            writer0.close();
-            reader0.close();
-             tempInfo.renameTo(infoNew); 
-               if (!infoFile.delete()&&infoNew.delete()) {
-               System.out.println("Error deleting the original file.");
-
-                }
-          }catch (IOException e) {
-            System.out.println("Error reading or writing to the file: " + e.getMessage());
-        }
-
-        File pricesFile= new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+name+"_Prices.txt");
-    
-        if (pricesFile.delete()) {
-            newSupplier.settingPrices();
-        }else{ System.out.println("Error deleting file");}
-          try{
-           File ordersFile= new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+name+"_Orders.txt");
-            File ordersNew= new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+newName+"_Orders.txt");
-            File tempOrders = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\tempOrders.txt");
-
-            BufferedReader reader3 = new BufferedReader(new FileReader(ordersFile));
-            BufferedWriter writer3 = new BufferedWriter(new FileWriter(tempOrders));
-
-            String currentLine3;
-
-            while ((currentLine3= reader3.readLine()) != null) {
-             
-                writer3.write(currentLine3 + System.getProperty("line.separator"));
-            }
-
-            writer3.close();
-            reader3.close();
-            tempOrders.renameTo(ordersNew);
-                  if (!ordersFile.delete()&& ordersNew.delete()) {
-           System.out.println("Error deleting the original file.");
-                
-            } }catch (IOException e) {
-            System.out.println("Error reading or writing to the file: " + e.getMessage());
-        }
+public void saveSuppliersToFile(Supplier sup) {
+    String fileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.dat";
+    try (RandomAccessFile raf = new RandomAccessFile(fileName, "rw")) {
+        raf.seek(raf.length());
+            raf.writeUTF( sup.getSName());
+            //raf.writeUTF( "\t"); 
+            raf.writeInt( sup.getScontactInfo());
+            raf.writeUTF( "\n"); 
 
         
-    
-       }
-         
-         else  if(editValue==2){        
-          System.out.println("enter new pass");
-            String newpass=sr.next();
-              newSupplier.setSPassword(newpass);
-              try {
-            
-            File inputFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+newSupplier.getSName()+"_Info.txt");
-            File tempFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\tempFile.txt");
+    } catch (IOException e) {
+                    System.out.println(e);
 
-                BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-            String currentLine;
-
-            while ((currentLine = reader.readLine()) != null) {
-                // Check if the line contains the search keyword
-                if (currentLine.contains("Password:")) {
-                    // Get the word next to "Password:" until the next space
-                    String[] parts = currentLine.split("\\s+");
-                    if (parts.length > 1) {
-                        // Replace the word next to "Password:" with the new password
-                        currentLine = currentLine.replace(parts[1], newpass);
-                    }
-                }
-                writer.write(currentLine + System.getProperty("line.separator"));
-            }
-
-            writer.close();
-            reader.close();
-
-            // Delete the original file
-            if (inputFile.delete()) {
-                // Rename the temporary file to the original file name
-                if (!tempFile.renameTo(inputFile)) {
-                    System.out.println("Error renaming the file.");
-                }
-            } else {
-                System.out.println("Error deleting the original file.");
-            }
-
-            System.out.println("Password changed successfully.");
-
-        } catch (IOException e) {
-            System.out.println("Error reading or writing to the file: " + e.getMessage());}
-        }
-         else    if(editValue==0){
-                   System.out.println("exiting");}
-
-                    
-             else{
-                    System.out.println("invalid input");
-                    
-            }}while(editValue!=0);}
-     public  void deleteSupplierFiles(String name) {
-        // Implement the logic to delete files associated with the supplier
-         Supplier supplier=new Supplier(name);
-        File infoFile = new File( "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+name +"_Info.txt");
-        File ordersFile = new File( "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+name +"_Orders.txt");
-        File pricesFile = new File( "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+name +"_Prices.txt");
-        
-        if (infoFile.exists()) {
-            infoFile.delete();
-        }
-        if (ordersFile.exists()) {
-            ordersFile.delete();
-        }
-        if (pricesFile.exists()) {
-            pricesFile.delete();
-        }
-       try {
-           if(searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",supplier.getSName())) {
-               
-               String filePath = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt";
-               
-               
-               try {
-                   File inputFile = new File(filePath);
-                   File tempFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\tempFile.txt");
-                   
-                   BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                   BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-                   
-                   String currentLine;
-                   
-                   while ((currentLine = reader.readLine()) != null) {
-                       // Check if the line contains the search text
-                       if (currentLine.contains(name)) {
-                           continue; // Skip the line
-                       }
-                       writer.write(currentLine + System.getProperty("line.separator"));
-                   }
-                   writer.close();
-                   reader.close();
-                   
-                   // Delete the original file
-                   if (inputFile.delete()) {
-                       // Rename the temporary file to the original file name
-                       if (!tempFile.renameTo(inputFile)) {
-                           System.out.println("Error renaming the file.");
-                       }
-                   } else {
-                       System.out.println("Error deleting the original file.");
-                   }
-                   ;
-                   
-               } catch (IOException e) {
-                   System.out.println("Error reading or writing to the file: " + e.getMessage());
-               }
-           }  } catch (IOException ex) {
-           Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
-       }
+    }
 }
 
-       
-
-    public void saveSuppliersToFile() {
-           
-        try (FileWriter writer = new FileWriter("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",true)) {
-        
-            for (Supplier supplier : suppliers) {
-                 if(searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",supplier.getSName())) {      
-       }
-                 else{
-                writer.write(supplier.getSName() +"\n");}
-                
-            }
-        } catch (IOException e) {
-            System.out.println("Error saving suppliers to file: " + e.getMessage());
-        }
-    }
-
-   Scanner input=new Scanner(System.in);
-    public void addSupplier(String name, String password) {
-        Supplier supplier=new Supplier(name,password);
-        supplier.settingPrices();
-       try {
-           if(searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",name)) {
-               System.out.println("Supplier already exist");
-           }
-           else{
-               Supplier newSupplier = new Supplier(name, password);
-               suppliers.add(newSupplier);
-               saveSuppliersToFile();
-               supplier.setSName(name);
-               supplier.setSPassword(password);
-               supplier.saveSupplierInfo();
-               System.out.println("Supplier added successfully!");
-               
-           }  } catch (IOException ex) {
-           Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
-       }
-    }
-       public void removeSupplier(String name) throws IOException {
-         Supplier newSupplier = new Supplier(name);
-       String FileName="Suppliers.txt";
-        if (searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+FileName,name)) {
-            //
-            suppliers.remove(newSupplier);
-            saveSuppliersToFile();
-            // Delete the corresponding files
-            deleteSupplierFiles(name);
-            System.out.println("Supplier removed successfully.");
-        } else {
-            System.out.println("Supplier not found.");
-        }
-    }
+public void addSupplier(String name, int contactInfo) throws IOException {
+                           Supplier sup=new Supplier(name,contactInfo);
       
 
-   public void SmaxRevenue(){
-  
-      double max=0;
-           String filePath = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt"; 
+    ArrayList<String> supplierInfo = new ArrayList<>();
+    if (!searchSupplier(name)) {
+        supplierInfo.add(name);
+        supplierInfo.add(Integer.toString(contactInfo)); 
+        supplierInfo.add("0"); 
+        supplierInfo.add("0.0"); 
+        supplierNames.add(name);
+        saveSuppliersToFile(sup);
+        sup.saveSupplierInfo();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            
-             String line = null;
-           Supplier ssupplier= new Supplier(line);
-            while ((line = reader.readLine()) != null) {
-           ssupplier= new Supplier(line);
-              if(ssupplier.getSTotalRevenue()>max){     
-              max=ssupplier.getSTotalRevenue();
-              }
-            }System.out.println(ssupplier.getSName());
-             
-            
-        } catch (IOException e) {
-            System.out.println("Error reading the file: " + e.getMessage());}
-             
-
-
-   
-}
-     public void SmaxOrders(){
-  
-      int max=0;
-           String filePath = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt"; 
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            
-             String line = null;
-           Supplier ssupplier= new Supplier(line);
-            while ((line = reader.readLine()) != null) {
-           ssupplier= new Supplier(line);
-              if(ssupplier.getNumberOfOrders()>max){     
-              max=ssupplier.getNumberOfOrders();
-              }
-            }System.out.println(ssupplier.getSName());
-             
-            
-        } catch (IOException e) {
-            System.out.println("Error reading the file: " + e.getMessage());}
-     }
-
-    public static ArrayList<ArrayList<String>> getNewSupplierList() {
-        return newSupplierList;
+        System.out.println("Supplier added successfully!");
+    } else {
+        System.out.println("This supplier already exists");
     }
 
-   
+}
 
-     public void editSupplier(String currentName,  String newPassword) throws IOException {
-        searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",currentName);
-        if (searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",currentName)) {
 
-            editSupplierFileContents(currentName,newPassword);
-            System.out.println("Supplier edited successfully.");
-        } else {
-            System.out.println("Supplier not found.");
+
+
+    public void displayOrders(Supplier sup) throws IOException {
+            System.out.println("Orders for " + sup.getSName() + ":");
+          
+        sup.displayOrders();
+
+    }
+
+    public void displayPrices(Supplier  sup) throws IOException {
+               try (RandomAccessFile raf = new RandomAccessFile( "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+sup.getSName() + "_Prices.dat", "r")) {
+            System.out.println("Prices for " + sup.getSName() + ":");
+           sup.displayPrices();
         }
+
     }
+
+
+   
+public void displaySupplierInfo(Supplier sup) {
+    sup.displaySupplierInfo();
+}
+public  boolean searchSupplier(String sName) {
+    boolean found=false;
+     String fileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.dat";
+
+        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(fileName))) {
+            while (inputStream.available() > 0) {
+                String supplierName = inputStream.readUTF();
+                Supplier sup=new Supplier(supplierName);
+                int contactInfo = inputStream.readInt();
+                String newLine = inputStream.readUTF();  
+                if(sName.equalsIgnoreCase( supplierName)){
+                found=true;
+                }
+            }
+        } catch (IOException e) {
+                        System.out.println(e);
+
+        }
+        return found;
 }
 
+  
+public void deleteSupplierFiles(Supplier sup) throws IOException {
+    String name = sup.getSName();
+    String contactInfo = String.valueOf(sup.getScontactInfo());
+
+    File infoFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + name + "_Info.dat");
+    File ordersFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + name + "_Orders.dat");
+    File pricesFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + name + "_Prices.dat");
+
+    if (infoFile.exists()) {
+        infoFile.delete();
+    }
+    if (ordersFile.exists()) {
+        ordersFile.delete();
+    }
+    if (pricesFile.exists()) {
+        pricesFile.delete();
+    }
+        File inputFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.dat" );
+       File tempFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\temp.dat" );
+
+      
+    try (RandomAccessFile raf = new RandomAccessFile(inputFile, "rw");
+         RandomAccessFile tempRaf = new RandomAccessFile(tempFile, "rw")) {
+
+        long pos = 0;
+
+        while (raf.getFilePointer() < raf.length()) {
+            long currentPosition = raf.getFilePointer();
+            String currentLine = raf.readUTF();
+             int currentContactInfo = raf.readInt();
+            raf.readUTF();
+            if (!currentLine.contains(sup.getSName())) {
+             tempRaf.writeUTF(currentLine);
+                tempRaf.writeInt(currentContactInfo);
+             tempRaf.writeUTF("\n");
+                pos = currentPosition;
+            }
+        }
+
+        raf.seek(pos);
+        tempRaf.seek(0);
+        while (tempRaf.getFilePointer() < tempRaf.length()) {
+            raf.writeUTF(tempRaf.readUTF());
+             raf.writeInt(tempRaf.readInt());
+            raf.writeUTF("\n");
+        }
+
+    } catch (IOException e) {
+    } finally {
+        if (tempFile.exists()) {
+            if (inputFile.delete()) {
+                if (!tempFile.renameTo(inputFile)) {
+                    System.out.println("Error renaming file.");
+                }
+            } else {
+                System.out.println("Error deleting file.");
+            }
+        }
+    
+}
+
+    }
+public String getsMaxRevenue(){
+    double max=0;
+    String sMax=null;
+          String fileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.dat";
+
+        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(fileName))) {
+            while (inputStream.available() > 0) {
+                String supplierName = inputStream.readUTF();
+                Supplier sup=new Supplier(supplierName);
+                int contactInfo = inputStream.readInt();
+                String newLine = inputStream.readUTF();  
+    String infoFileName =  "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+sup.getSName() + "_info.dat";
+
+    try (DataInputStream infoInputStream = new DataInputStream(new FileInputStream(infoFileName));
+               RandomAccessFile raf = new RandomAccessFile(infoFileName, "r")) {
+
+        while (infoInputStream.available() > 0) {
+                String  name = raf.readUTF();
+                int  contact = raf.readInt();
+                double rev = raf.readDouble();
+                int   orders = raf.readInt();
+                if(max<rev){
+                max=rev;
+                sMax=sup.getSName();
+                }
+           }
+            }catch (IOException e) {
+                            System.out.println(e);
+
+        }
+            }     
+             
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    return sMax;
+}
+
+public String getsMaxOrders(){
+     int max=0;
+    String sMax=null;
+          String fileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.dat";
+
+        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(fileName))) {
+            while (inputStream.available() > 0) {
+                String supplierName = inputStream.readUTF();
+                Supplier sup=new Supplier(supplierName);
+                int contactInfo = inputStream.readInt();
+                String newLine = inputStream.readUTF();  
+    String infoFileName =  "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+sup.getSName() + "_info.dat";
+
+    try (DataInputStream infoInputStream = new DataInputStream(new FileInputStream(infoFileName));
+               RandomAccessFile raf = new RandomAccessFile(infoFileName, "r")) {
+
+        while (infoInputStream.available() > 0) {
+                String  name = raf.readUTF();
+                int  contact = raf.readInt();
+                double rev = raf.readDouble();
+                int   orders = raf.readInt();
+                if(max<orders){
+                max=orders;
+                sMax=sup.getSName();
+                }
+            }
+            }catch (IOException e) {
+                            System.out.println(e);
+
+        }
+            }     
+             
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    return sMax;
+//return max;
+}
+  
+   public void editSupplier(Supplier sup,int newContactInfo) throws IOException{
+    File inputFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.dat" );
+       File tempFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\temp.dat" );
+
+      
+    try (RandomAccessFile raf = new RandomAccessFile(inputFile, "rw");
+         RandomAccessFile tempRaf = new RandomAccessFile(tempFile, "rw")) {
+
+        long pos = 0;
+
+        while (raf.getFilePointer() < raf.length()) {
+            long currentPosition = raf.getFilePointer();
+            String currentLine = raf.readUTF();
+            int currentContactInfo = raf.readInt();
+            raf.readUTF();
+            if (!currentLine.contains(sup.getSName())) {
+                tempRaf.writeUTF(currentLine);
+                tempRaf.writeInt(currentContactInfo);
+                tempRaf.writeUTF("\n");
+                pos = currentPosition;
+            }
+        }
+
+        raf.seek(pos);
+        tempRaf.seek(0);
+        while (tempRaf.getFilePointer() < tempRaf.length()) {
+            raf.writeUTF(tempRaf.readUTF());
+            raf.writeInt(tempRaf.readInt());
+            raf.writeUTF("\n");
+        }
+
+    } catch (IOException e) {
+                    System.out.println(e);
+
+    } finally {
+        if (tempFile.exists()) {
+            if (inputFile.delete()) {
+                if (!tempFile.renameTo(inputFile)) {
+                    System.out.println("Error renaming temp file to original file.");
+                }
+            } else {
+                System.out.println("Error deleting original file before renaming.");
+            }
+        }
+   sup.edit(newContactInfo);
+   sup.setScontactInfo(newContactInfo);
+   saveSuppliersToFile(sup);
+   
+   }
+
+    
+}}

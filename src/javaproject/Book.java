@@ -41,10 +41,18 @@ public class Book implements Serializable {
     private int borrows;
     //for total borrows of all books
     private int price;
+    private  boolean isRated;
     // creates a list of book objects 
    private static ArrayList<Book> books= new ArrayList<>();
-    
+    private boolean isBorrowed;
     //data memeber shahd me7tagha
+   public boolean isRated(){
+    return isRated;
+    }
+    
+    public void setisRated(boolean borrowed){
+    isRated= borrowed;
+    }
     private static int totalBorrows=-1;
    private int copiesCount=0;
     private static List<Integer> ratings=new ArrayList<>();
@@ -52,6 +60,13 @@ public class Book implements Serializable {
         this.ratings.add(rating);
     }
     
+    public boolean isBorrowed(){
+    return isBorrowed;
+    }
+    
+    public void setBorrowed(boolean borrowed){
+    isBorrowed=borrowed;
+    }
     public double getAverageRating(){
         int sum=0;
         for(int rating:ratings){
@@ -345,7 +360,13 @@ public class Book implements Serializable {
 ////          System.out.println("Book returned succesfully on time, no fine!");
 ////      }
 //    }   
-    
+    public static void loadBooks() {
+    try (ObjectInputStream file = new ObjectInputStream(new FileInputStream("books.dat"))) {
+        books = (ArrayList<Book>) file.readObject();
+    } catch (IOException | ClassNotFoundException e) {
+        System.out.println("Error loading books: " + e.getMessage());
+    }
+}
     
     //function shahd needs
     public static Book findBookByTitle(String title) {

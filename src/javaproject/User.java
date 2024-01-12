@@ -12,11 +12,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public  class User implements Serializable {
+public  class User {
     private String Name;
 private String pass;
  private ArrayList<Book> BorrowedBooks=new ArrayList();
@@ -32,29 +31,7 @@ public User(String Name, String pass) {//constructor
     public ArrayList<Book> getBorrowedBooks() {
         return BorrowedBooks;
     }
-     public void clearCart()
- {
-     BorrowedBooks.clear();
- }
-        public   void removeBooksFromCart(User borrower, List<Book> booksToCancel) {
-     for (Book i : booksToCancel) {
-       getBorrowedBooks().remove(i);
-    }
-    }
-               public  Book findbookbytitle(String title)
-{
-    for(Book book:Book.getBooks())
-    {
-        if(book.getTitle().equals(title))
-        {
-            System.out.println(book);
-        }
-    }
-    return null;
-}
-                     public void addLibrarian( User newLibrarian){
-        System.out.println("No librarian user");
-    }
+
     public void setBorrowedBooks(ArrayList<Book> BorrowedBooks) {
         this.BorrowedBooks = BorrowedBooks;
     }
@@ -75,42 +52,8 @@ public User(String Name, String pass) {//constructor
         this.pass = pass;
     }
     
-//    public void addLibrarian( User newLibrarian){
-//        System.out.println("No librarian user");
-//    }
-    
-//    public void addTo(String name){
-//        System.out.println(" No user");
-//    }
-    
-    
-//    public static void serializeData() throws IOException
-//    {
-//    
-//        //writes the array of books into the file
-//        try (ObjectOutputStream file = new ObjectOutputStream(new FileOutputStream("User.dat"))) {
-//            //writes the array of books into the file
-//            for(User usr : users){
-//                file.writeObject(usr);}
-//        }
-//        
-//    }
-//    
-//    public static void deserializeData() throws FileNotFoundException, IOException, ClassNotFoundException
-//    {
-//        
-//        try (FileInputStream fileIn = new FileInputStream("User.dat")) {
-//            ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-//            int numObjects = objectIn.readInt(); // Read the number of objects stored in the file
-//            for (int i = 0; i < numObjects; i++) {
-//                User usr = (User) objectIn.readObject();
-//                users.add(usr);
-//            }
-//            objectIn.close();
-//        }
-//    }
-//        
-   public  void borrowBook(String title){
+     
+   public  void borrowBook(Book book){
        System.out.println("No book borrowed");
    }
    public void editName(String newName){
@@ -137,7 +80,7 @@ public User(String Name, String pass) {//constructor
        System.out.println("You did not yet borrow a book");
   }
    
-   public void rateBook(String title, int rating){
+   public void rateBook(Book book, int rating){
        System.out.println("You have to pick a book to rate");
    }
    public int getNumberOfBorrowings(){
@@ -148,20 +91,54 @@ public User(String Name, String pass) {//constructor
        System.out.println("No information available");
    }
    
- public void writeRatingsToFile(String title){
+ public void writeRatingsToFile(Book book, int rate){
       System.out.println("No availabe ratings");
   }
  
- public void displayAllRatings(String Title){
+ public void ReadAllRatings(Book book){
      System.out.println("no available ratings");
  }
 //    public void calculatePayment() {
-//        
+//        '
+ 
 //    }
+ 
+ public void printtofile() {
+   
+     System.out.println("no borrower to add");
+}
+ 
+public void numberOfBorrowperUser(){
+    System.out.println("user didnt borrow book");
+}
+ 
+public void clearCart()
+ {
+     BorrowedBooks.clear();
+ }
+     
+
+          public   void removeBooksFromCart(User borrower, List<Book> booksToCancel) {
+     for (Book i : booksToCancel) {
+       getBorrowedBooks().remove(i);
+    }
+    }
+public void displayAllSuppliers(){
+    System.out.println("no supplies");
+}
+// public void AllBorrowers(List<User> users){
+//     System.out.println("No borrower to add");
+//}
+//
+//public List<User> readAllBorrowers(){
+//    List<User> users= new ArrayList<>();
+//      System.out.println("No borrower to read");
+//      return users;
+//}
 }
     
 
-   
+
    
    
 

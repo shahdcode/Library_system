@@ -1,26 +1,29 @@
 package javaproject;
 
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 
 
 public class Librarian_Mgn  extends User{
-     private static ArrayList<Book> records=new ArrayList<>();     
+    public static ArrayList<Book> records = new ArrayList<>();    
      private ArrayList<String>cancelarr=new ArrayList<>();
       private ArrayList<Book> cancelbooks= new ArrayList<>();
-      private ArrayList<Book> books=new ArrayList<>();
+      private List<Book> books=new ArrayList<>();
       private static ArrayList<Book> allbooks=new ArrayList<>();
-  ArrayList<String> bookTitles=new ArrayList<>() ;
+ private ArrayList<String> bookTitles=new ArrayList<>() ;
 
     public Librarian_Mgn (String Name,String password) {
         super(Name,password);
@@ -29,9 +32,11 @@ public class Librarian_Mgn  extends User{
      {
          
      }
-       public static List<Book> getRecords() {
+
+    public static List<Book> getRecords() {
         return records;
     }
+     
     public static ArrayList<Book> getAllbooks() {
      return allbooks;
  }
@@ -40,9 +45,8 @@ public class Librarian_Mgn  extends User{
      return cancelarr;
  }
  
-
  
-  public static void createBorrowing(User borrower){
+ public static void createBorrowing(User borrower){
      System.out.println("Borrower: "+borrower.getName());
      List<Book>borrowings=borrower.getBorrowedBooks();
      if(borrowings.isEmpty())
@@ -128,14 +132,15 @@ public class Librarian_Mgn  extends User{
     }
     
     
-        private Borrower_Mgn borrowerManager;
+    private Borrower_Mgn borrowerManager;
    public void specifyBorrowingTermDetails() {
      borrowerManager.readFromFileAll();
     }
-      
+    
+   
  
   
-   public ArrayList<String> parseBookTitles(String input) {
+  public ArrayList<String> parseBookTitles(String input) {
    
     String[] titles = input.split(",");
     for (String title : titles) {
@@ -185,8 +190,8 @@ try{
            System.out.println(e);
         }
 }
-      private static List<Double> totalList=new ArrayList<>();
-public static List<Double>gettotalpay(){
+      private static ArrayList<Double> totalList=new ArrayList<>();
+public static ArrayList<Double>gettotalpay(){
     return  totalList;
 }
    public static double calculatePayment( User borrow) {
@@ -206,9 +211,19 @@ public static List<Double>gettotalpay(){
                    return 0;
        }
    }
-    private static final String PAYMENT_FILE_PATH = "calculations.dat";
-      private static void writePaymentToFile(double totalPayment){
-       try(DataOutputStream dos=new DataOutputStream(new FileOutputStream(PAYMENT_FILE_PATH ,true))){
+    
+   private static final String calcFile = "calculations.dat";
+//   private static void writePaymentToFile1(double totalPayment) {
+//        try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(PAYMENT_FILE_PATH, true))) {
+//            dataOutputStream.writeDouble(totalPayment); // Write the totalPayment as a double
+//            System.out.println("Total payment written to binary file.");
+//        } catch (IOException e) {
+//            System.out.println("Error writing to the binary file.");
+//            System.out.println(e);
+//        }
+//    }
+   public static void writePaymentToFile(double totalPayment){
+       try(DataOutputStream dos=new DataOutputStream(new FileOutputStream(calcFile ,true))){
            dos.writeDouble(totalPayment);
             System.out.println("Total payment written to binary file.");
            } catch (IOException e) {
@@ -216,10 +231,11 @@ public static List<Double>gettotalpay(){
             System.out.println(e);
         }   
    }
-    
+   
+   
   public static List<Double> readPaymentsFromFile() {
         List<Double> pay = new ArrayList<>();
-        try (DataInputStream dis = new DataInputStream(new FileInputStream(PAYMENT_FILE_PATH))) {
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(calcFile))) {
             while (dis.available() > 0) {
                 double payment = dis.readDouble();
                 pay.add(payment);
@@ -231,4 +247,3 @@ public static List<Double>gettotalpay(){
         return pay;
     }
 }
-

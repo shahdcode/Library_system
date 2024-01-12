@@ -95,9 +95,10 @@ public class Borrower_Mgn implements Serializable {
 
 
 
-    private static final String FILE_PATH = "AllBorrowers1.dat";
+    private static final String FILE_PATH = "AllBorrowers.dat";
 
-    private static  ArrayList<Book> info_history= new ArrayList<>();
+
+       private static  ArrayList<Book> info_history= new ArrayList<>();
         public static void printToFile(Borrower borrower) {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(FILE_PATH, false))) {
 
@@ -173,7 +174,7 @@ public class Borrower_Mgn implements Serializable {
       }
     }
        
-          public static void readFromFileAll() {
+   public static void readFromFileAll() {
         try (BufferedReader br = new BufferedReader(new FileReader("Borrowers_ALL.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -183,6 +184,5 @@ public class Borrower_Mgn implements Serializable {
             System.out.println("An error occurred while reading the file: " + e.getMessage());
         }
     }
-
     
 }
