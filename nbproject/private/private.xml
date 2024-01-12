@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/Users/zaina/OneDrive/Documents/GitHub/Library_system/src/javaproject/User.java</file>
             <file>file:/C:/Users/zaina/OneDrive/Documents/GitHub/Library_system/src/javaproject/Book.java</file>
             <file>file:/C:/Users/zaina/OneDrive/Documents/GitHub/Library_system/src/javaproject/Borrower.java</file>
@@ -12,6 +13,9 @@
             <file>file:/C:/Users/zaina/OneDrive/Documents/GitHub/Library_system/src/javaproject/Admin.java</file>
             <file>file:/C:/Users/zaina/OneDrive/Documents/GitHub/Library_system/src/javaproject/Borrower_Mgn.java</file>
             <file>file:/C:/Users/zaina/OneDrive/Documents/GitHub/Library_system/src/javaproject/Supplier.java</file>
+=======
+            <file>file:/D:/Desktop/Univeristy/Semester%203/Java%20book%20questions/JavaProject/src/javaproject/GUI_system.java</file>
+>>>>>>> 0e4e0d548116f0146f1e62764936773849311e8f
         </group>
     </open-files>
 </project-private>

@@ -163,14 +163,14 @@ public static void signIn(int usertype, String username,String password,
         ArrayList<Admin> admins = new ArrayList<>();
 
        String password;
-        Admin admin=new Admin(); //to call non static methods 
+        Admin admin=new Admin();
         Librarian librarian=new Librarian();
         Librarian_Mgn manage=new Librarian_Mgn();
          User borrower;  
-        Book book1 = new Book("Title 1", "Author 1", "fiction");
-        Book book2 = new Book("Title 2", "Author 2", "fiction");
- Book book3 = new Book("Title 3", "Author 1", "non-fiction");
-        Book book4 = new Book("Title 4", "Author 2", "science");
+        Book book1 = new Book("Title1", "Author1", "fiction");
+        Book book2 = new Book("Title2", "Author2", "fiction");
+ Book book3 = new Book("Title3", "Author1", "non-fiction");
+        Book book4 = new Book("Title4", "Author2", "science");
          book1.setPrice(100);
  book2.setPrice(80);
 book3.setPrice(70);
@@ -184,6 +184,7 @@ Borrower borrower1 = new Borrower("Borrower1", "Password1");
         Borrower borrower2 = new Borrower("Borrower2", "Password2");
         Librarian librarian1 = new Librarian("Librarian1", "Password1");
         Admin admin1 = new Admin("Admin1", "Password4");
+              Borrower u=new Borrower("SHAHD","password");
         borrowers.add(borrower1);
         borrowers.add(borrower2);
         librarians.add(librarian1);
@@ -224,8 +225,22 @@ Borrower borrower1 = new Borrower("Borrower1", "Password1");
                   signIn(usertype,userName,password,borrowers,admins,librarians); //1 borrower 2-librarian 3-admin
                   switch(usertype){
                       case 1:
-                               int choice1;
-                               //User u=new Borrower("Mariam",password); 
+                                              int choice1;
+     Book book= new Book("Book1","Author1", "fiction");
+        Book book5= new Book("Book2","Author1", "fiction");
+        Book.addBook(book);
+        Book.addBook(book1);
+                 book.setPrice(100);
+ book5.setPrice(80);
+       
+  
+        
+       
+        
+        
+        
+        
+        
         do {
             System.out.println("Menu:");
             System.out.println("1. Borrow a book");
@@ -235,34 +250,27 @@ Borrower borrower1 = new Borrower("Borrower1", "Password1");
             System.out.println("5. View ratings of a Book");
             System.out.println("6. Display borrower information");
             System.out.println("7. Total number of borrowings you added so far");
-            System.out.println("8: Return  book");
+            System.out.println("8. return a book");
             System.out.println("9. Exit");
             System.out.print("Enter your choice: ");
-           //Scanner input= new Scanner(System.in);
-            choice1=input.nextInt(); // Consume the newline character
+          
+            choice=input.nextInt(); // Consume the newline character
 input.nextLine();
-            switch (choice1) {
+        
+            switch (choice) {
                 case 1:
-       
-
-        // Adding books
-        Book.addBook(book1);
-        Book.addBook(book2);
-                    Book.listBooks();
                     System.out.print("Enter the title of the book to borrow: ");
-                   // System.out.println();
-                    String borrowTitle = input.nextLine();
-                    username.borrowBook(borrowTitle);
+                     Book.listBooks();
+                    String borrowTitle = input.next();
+                    u.borrowBook(borrowTitle);
                     while(choice ==1){
                       System.out.println("Do you want to borrow book again? "+"\n 1. Yes\n 2. No");
-                      
                     choice=input.nextInt();
-                    input.nextLine();
                     if(choice==1){
                         Book.listBooks();
                         System.out.print("Enter the title of the book to borrow: ");
-                     borrowTitle = input.nextLine();
-                     username.borrowBook(borrowTitle);
+                     borrowTitle = input.next();
+                     u.borrowBook(borrowTitle);
                     }
                     else{
                         break;
@@ -271,9 +279,9 @@ input.nextLine();
                     
                     break;
                 case 2:
-                    Book book=null; //not sure
+                   
                     System.out.println("The book you currently borrowed");
-                    username.ListBorrowed();
+                    u.ListBorrowed();
                     System.out.print("Enter the title of the book to return: ");
                     String Title = input.nextLine();
 //                    Book bookToReturn=Book.findBookByTitle(Title);
@@ -282,51 +290,62 @@ input.nextLine();
                 case 3:
                     System.out.print("Enter the new name: ");
                     String newName = input.nextLine();
-                    username.editName(newName);
+                    u.editName(newName);
                     break;
                 case 4:
-                    //int rating=0;
-                    Book.listBooks();
-                    System.out.println();
+                    int rating=0;
                     System.out.println("Rate a book");
                     System.out.println("Which book do you want to rate");
-                   //input.nextLine(); //possible whitepsace
                     Title=input.nextLine();
                     System.out.println("On a scale of 1 to 5, how do you want to rate the book");
-                    int rating=input.nextInt();
-                    input.nextLine();
-                    username.rateBook(Title,rating);
+                    rating=input.nextInt();
+                    u.rateBook(Title,rating);
                     break;
                 case 5:
-                    System.out.println("Which book do you want view its rating");
-                   //input.nextLine();//consume newline
-                    Title=input.nextLine();
-                    username.displayAllRatings(Title);
-                  //  username.writeRatingsToFile(Title);
-                    
+                    System.out.println("Your information: ");
+                    u.display();
                     break;
                 case 6:
-                    System.out.println("Displaying your information: ");
-                    System.out.println();
-                    username.display();
+                    System.out.println("Exiting the program...");
                     break;
                 case 7:
                     System.out.println("Total number of borrowings you added so far");
-                    System.out.println(username.getNumberOfBorrowings());
                     break;
                 case 8:
-                    System.out.println("Total number of borrowings you added so far");
-                    System.out.println(username.getNumberOfBorrowings());
-                break;
-                case 9:
+                    u.returnBook(book);
+                    
+                    break;
+                 case 9:
                     System.out.println("Exiting the program...");
-                    return;
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
                     break;
             }
         } while (choice != 9);
-                          break;
+
+       // input.close();
+       
+       
+       
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("AllBorrowers.txt"))) {
+            while (true) {
+                try {
+                    // Read the Borrower object
+                    System.out.println(objectInputStream.readObject()); 
+                    System.out.println(objectInputStream.readUTF());
+                    //Borrower borrower = (Borrower) objectInputStream.readObject();
+                   // borrowers.add(borrower);
+                } catch (EOFException e) {
+                    break; // End of file reached
+                }
+            }
+
+            System.out.println("Data read from file in binary format.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e);
+        }
                           
                       case 2:
                 System.out.println("Welcome librarian "+userName);
@@ -419,12 +438,12 @@ input.nextLine();
                         Book.listBooks();
                         break;
                                case 8:
-                            Borrower b=new Borrower();
-         List<User> u=b.readFromFile(); 
+                            Borrower_Mgn b=new Borrower_Mgn();
+         List<User> u1=b.readFromFile(); 
                     System.out.println("Enter borrower's name to cancel borrowing: ");
                     
                     String borrowerNameToCancel = input.next();
-                    for(User i:u)
+                    for(User i:u1)
                     {
                         if(i.getName().equals(borrowerNameToCancel))  
                         {
@@ -435,42 +454,31 @@ input.nextLine();
                     break;
                         
                 case 9:
-                                Borrower bro=new Borrower();
-         List<User> user=bro.readFromFile(); 
-             System.out.print("Enter borrower's name ");
-String borrowerName = input.nextLine();
-        borrower = null;//(borrowerName.equals("b1")) ? b1 : (borrowerName.equals("b2") ? b2 : null);
-
-                     for(User i:user)
-                    {
-                        if(i.getName().equals(borrowerName))  
-                        {
-                        borrower=i;
-                         break;//user found
-                        }
-                    }
-
-if(borrower!=null)
-{
-    System.out.print("Enter book title: ");
-    String bookTitle = input.nextLine();
-    Book selectedBook = borrower.findbookbytitle(bookTitle);
-    if (selectedBook != null) {
-        manage.createBorrowing(borrower, selectedBook);
-        manage.display();
-    } else {
-        System.out.println("Book not found.");
-    }
-} else {
-    System.out.println("Borrower not found.");
-}
+   Borrower_Mgn bro = new Borrower_Mgn();
+        List<User> users = bro.readFromFile();
+        System.out.print("Enter borrower's name: ");
+        String borrowerName = input.next();
+        User borrower7 = null;
+        for (User user : users) {
+            if (user.getName().equals(borrowerName)) {
+                borrower7 = user;
+                break; 
+            }
+        }
+        if (borrower7 != null) {
+           
+            Librarian_Mgn.createBorrowing(borrower7);
+             manage.display();
+        } else {
+            System.out.println("Borrower not found.");
+        }
 break;
                    case 10:
                    manage.selectCategory(); 
                     break;
                 case 11:     
                       
-//          manage.specifyBorrowingTermDetails(username);
+  manage.specifyBorrowingTermDetails();
           break;
               case 12:         
            System.out.print("Enter the author's name: ");
@@ -479,23 +487,26 @@ break;
                     break;
         
             case 13:         
-           System.out.println("Enter borrower's name to calculate payment: ");
-                    String borrowerNameToCalculatePayment = input.next();
-                                        Borrower brow=new Borrower();
-         List<User> usered=brow.readFromFile(); 
-         borrower=null;
-                  for(User i:usered)
-                    {
-                        if(i.getName().equals(borrowerNameToCalculatePayment))  
-                        {
-                        borrower=i;
-                         break;//user found
-                        }
-                    }
-                   if(borrower!=null)
-                   {
-                       System.out.println( manage.calculatePayment(borrower));
-                   }
+             System.out.println("Enter borrower's name to calculate payment: ");
+    String borrowerNameToCalculatePayment = input.next();
+
+    Borrower_Mgn brow = new Borrower_Mgn();
+    List<User> usered = brow.readFromFile();
+     brow.printAllToFile( u);
+    User borrower3 = null;
+    System.out.println("List of borrowers:");
+    for (User usert : usered) {
+        if (usert.getName().equals(borrowerNameToCalculatePayment.trim())) {
+            borrower3 = usert; 
+            break;
+        }
+    }
+
+    if (borrower3 != null) {
+        System.out.println(manage.calculatePayment(borrower3)); 
+    } else {
+        System.out.println("Borrower not found.");
+    }
        break;           
                         case 14:
                System.out.println("exited" );
@@ -652,8 +663,7 @@ break;
                 String author= bookinput.nextLine();
                 System.out.println("Enter category:");
                 String category= bookinput.nextLine();
-                Book book= new Book(title,author,category);
-            Book.addBook(book);
+               
             System.out.println("List of books:");
              Book.listBooks();
             break;
@@ -821,7 +831,7 @@ break;
                 case 17: 
 
                     // View Total Revenue 
-                      Borrower brower=new Borrower();
+                      Borrower_Mgn brower=new Borrower_Mgn();
          List<User> user=brower.readFromFile(); 
                     System.out.println("Total Revenue: " + admin.getTotalRevenue()); 
 
@@ -832,7 +842,7 @@ break;
                 case 18: 
 
                     // View Average Revenue 
-                     Borrower browerer=new Borrower();
+                     Borrower_Mgn browerer=new Borrower_Mgn();
                        List<User> r=browerer.readFromFile(); 
 
                     System.out.println("Average Revenue: " + admin.getAverageRevenue()); 
@@ -861,14 +871,14 @@ break;
                     break; 
 case 21:
     
-                     Borrower b=new Borrower();
-         List<User> u=b.readFromFile(); 
-                   
-                    for(User i:u)
-                    {
-                        
-//                         admin.specifyBorrowingTermDetails(i); 
-                    }
+//                     Borrower_Mgn b=new Borrower_Mgn();
+//         List<User> u=b.readFromFile(); 
+//                   
+//                    for(User i:u)
+//                    {
+//                        
+////                         admin.specifyBorrowingTermDetails(i); 
+//                    }
                     break;
                         
 case 22:

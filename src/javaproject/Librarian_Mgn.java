@@ -1,17 +1,21 @@
 package javaproject;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
 
 
 public class Librarian_Mgn  extends User{
-     private ArrayList<Borrower_Mgn> records=new ArrayList<>();     
+     private static ArrayList<Book> records=new ArrayList<>();     
      private ArrayList<String>cancelarr=new ArrayList<>();
       private ArrayList<Book> cancelbooks= new ArrayList<>();
       private ArrayList<Book> books=new ArrayList<>();
@@ -25,7 +29,9 @@ public class Librarian_Mgn  extends User{
      {
          
      }
-     
+       public static List<Book> getRecords() {
+        return records;
+    }
     public static ArrayList<Book> getAllbooks() {
      return allbooks;
  }
@@ -36,17 +42,24 @@ public class Librarian_Mgn  extends User{
  
 
  
-    public void createBorrowing(User borrower,Book book)
-    {
-        Borrower_Mgn record=new Borrower_Mgn((Borrower)borrower,book);
-        records.add(record);  
-    }
-     
+  public static void createBorrowing(User borrower){
+     System.out.println("Borrower: "+borrower.getName());
+     List<Book>borrowings=borrower.getBorrowedBooks();
+     if(borrowings.isEmpty())
+     {
+          System.out.println("no books borrowed by this borrower");
+          
+     }
+     else{
+       System.out.println("Borrowed books:");  
+       records.addAll(borrowings);  
+     }
+ }
     public void display()
    {
-       for(Borrower_Mgn i:records)
+       for(Book i:getRecords())
        {
-           System.out.println(i);
+           System.out.println(i.getTitle());
        }
    }
 
@@ -113,20 +126,13 @@ public class Librarian_Mgn  extends User{
         System.out.println(e);
     }
     }
-//   public void specifyBorrowingTermDetails(User user) {
-//       int totalfine=0;
-//       
-//       for(Borrower_Mgn i:records)
-//       {  
-//           if(i.getUser().equals(user))
-//           {
-//           totalfine+=i.CalculateFine(); 
-//           }
-//       }
-//       System.out.println( totalfine);
-//     
-//    }
-//   
+    
+    
+        private Borrower_Mgn borrowerManager;
+   public void specifyBorrowingTermDetails() {
+     borrowerManager.readFromFileAll();
+    }
+      
  
   
    public ArrayList<String> parseBookTitles(String input) {
@@ -179,7 +185,10 @@ try{
            System.out.println(e);
         }
 }
-      
+      private static List<Double> totalList=new ArrayList<>();
+public static List<Double>gettotalpay(){
+    return  totalList;
+}
    public static double calculatePayment( User borrow) {
        try{
      int totalPayment = 0;
@@ -188,14 +197,38 @@ try{
             totalPayment += book.getPrice();
        
     }
+      writePaymentToFile(totalPayment);
     return totalPayment ;
        }catch(Exception e)
        {
            System.out.println(e);
+           System.out.println("ay haga");
                    return 0;
        }
    }
+    private static final String PAYMENT_FILE_PATH = "calculations.dat";
+      private static void writePaymentToFile(double totalPayment){
+       try(DataOutputStream dos=new DataOutputStream(new FileOutputStream(PAYMENT_FILE_PATH ,true))){
+           dos.writeDouble(totalPayment);
+            System.out.println("Total payment written to binary file.");
+           } catch (IOException e) {
+            System.out.println("Error writing to the binary file.");
+            System.out.println(e);
+        }   
+   }
     
-
-
+  public static List<Double> readPaymentsFromFile() {
+        List<Double> pay = new ArrayList<>();
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(PAYMENT_FILE_PATH))) {
+            while (dis.available() > 0) {
+                double payment = dis.readDouble();
+                pay.add(payment);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading from the binary file.");
+            System.out.println(e);
+        }
+        return pay;
+    }
 }
+

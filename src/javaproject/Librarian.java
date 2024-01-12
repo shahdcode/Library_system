@@ -19,7 +19,10 @@ public class Librarian extends User {
    // Librarian library=new Librarian();
   //  private Object librarian;
     
-
+      @Override
+    public String toString() {
+        return "Admin [username=" + userName + ", password=" + password + "]"; 
+    }
     public Librarian(String userName, String password) {
         super(userName,password);
         //this.librarians = librarians;

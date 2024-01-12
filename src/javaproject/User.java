@@ -36,9 +36,9 @@ public User(String Name, String pass) {//constructor
  {
      BorrowedBooks.clear();
  }
-          public   void removeBooksFromCart(User borrower, List<Book> booksToCancel) {
-    for (Book i : booksToCancel) {
-       System.out.println( "i");
+        public   void removeBooksFromCart(User borrower, List<Book> booksToCancel) {
+     for (Book i : booksToCancel) {
+       getBorrowedBooks().remove(i);
     }
     }
                public  Book findbookbytitle(String title)

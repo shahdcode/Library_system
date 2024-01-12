@@ -19,6 +19,9 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author zaina
@@ -38,10 +41,10 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
     private int numOfOrders;
         @Override
     public String toString() {
-        return "Admin [username=" + name + ", password=" + pass + "]"; // Assuming you have username and password fields
+        return "Admin [username=" + name + ", password=" + pass + "]"; 
     }
        private double revenue;
-    private File file=new File("admins2.dat");
+    private File file=new File("admins3.dat");
    private File file1=new File("librarians.dat");
     public void addAdmin(User ad) {
         Admin add=new Admin(ad.getName(),ad.getPass());
@@ -72,6 +75,13 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
     public String getPass() {
         return pass;
     }
+
+    public ArrayList<Admin> getAdmins() {
+        return admins;
+    }
+     public static ArrayList<Librarian> getLibrarians() {
+        return librarians;
+    }
      private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(name);
         out.writeObject(pass);
@@ -81,20 +91,31 @@ private static ArrayList<Supplier> suppliers = new ArrayList<>();
         name = (String) in.readObject();
         pass = (String) in.readObject();
     }
- public void saveAllAdminsToFile() throws IOException {
-    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("C:\\Users\\zaina\\OneDrive\\Documents\\NetBeansProjects\\javaproject\\"+file))) {
-        List<Admin> admins = this.admins; 
-        oos.writeInt(admins.size()); 
-        for (Admin admin : admins) {
-            System.out.println("Writing admin: " + admin);
-            oos.writeObject(admin); 
-        }
-    } catch (IOException e) { 
-        System.out.println("Failed to save admins: " + e.getMessage());
-        e.printStackTrace(); 
-    }
-}
 
+ public void saveAllAdminsToFile() throws IOException{
+     try(ObjectOutputStream oos=new ObjectOutputStream(new FileOutputStream("C:\\Users\\zaina\\OneDrive\\Documents\\NetBeansProjects\\javaproject\\" + file))){
+         oos.writeObject(admins);
+     }catch(IOException e){
+          System.out.println("Failed to save admins: " + e.getMessage());
+          e.printStackTrace();
+     }
+ }
+public String displayAdminsFromFile() throws IOException, ClassNotFoundException {
+    StringBuilder adminDetails = new StringBuilder();
+    
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\zaina\\OneDrive\\Documents\\NetBeansProjects\\javaproject\\" + file))) {
+        ArrayList<Admin> readAdmins = (ArrayList<Admin>) ois.readObject();  
+        
+        for (Admin admin : readAdmins) {
+            adminDetails.append("Name: ").append(admin.getName()).append(", ID: ").append(admin.getPass()).append("\n");
+        }
+    } catch (IOException | ClassNotFoundException e) {
+        System.out.println("Failed to read admins from file: " + e.getMessage());
+        e.printStackTrace();
+    }
+    
+    return adminDetails.toString();  
+}
 
 
 //    
@@ -167,37 +188,37 @@ public ArrayList<Admin> readfromfileadmin()throws IOException, ClassNotFoundExce
 
     return adminlist;
 }
-public ArrayList<Librarian> readfromfilelibrarian() {
-    ArrayList<Librarian> lib = new ArrayList<>();
-    try (FileInputStream fis = new FileInputStream("librarians.dat");
-         DataInputStream reader = new DataInputStream(fis)) {
-        while (reader.available() > 0) {
-            String line = reader.readUTF();
-            String[] userInfo = line.split(" ");
-            if (userInfo.length >= 2) {
-                String currentUserName = userInfo[0];
-                String currentUserPass = userInfo[1];              
-                Librarian librarian = new Librarian(currentUserName, currentUserPass); 
-                lib.add(librarian);
-                System.out.println(line);
-            }
-        }
+public void removeAdmin(String NameToRemove) throws IOException, ClassNotFoundException {
 
-       } catch (FileNotFoundException e) {
-        System.out.println("File not found: " + e.getMessage());
-        // Optionally, create a default behavior, log the error, or handle it in another way.
-    } catch (EOFException e) {
-        System.out.println("End of file reached while reading librarians.");
-    } catch (IOException e) {
-        System.out.println("Error reading librarians: " + e.getMessage());
-        e.printStackTrace();
+  if(NameToRemove==null|| NameToRemove.trim().isEmpty()){
+        System.out.println("invalid username");
+        return;
+}
+      
+  boolean removed=false;
+Iterator<Admin>it=admins.iterator();
+
+while(it.hasNext())
+{
+    Admin ad=it.next();
+    if(ad.getName().equals(NameToRemove)){
+        it.remove();
+        System.out.println("Admin"+NameToRemove+" removed successfully");
+        removed=true;
+        break;
+}
+
     }
+if(!removed)
+{
+     System.out.println("Admin"+NameToRemove+" not found");
+     return;
+}
 
-    return lib;
-   
+    saveAllAdminsToFile();
 }
 public void editadmin( String old, String field, String newvalue) throws IOException, ClassNotFoundException {
-    admins=readfromfileadmin();
+
      boolean userFound = false;
     for (Admin i : admins) {
        if (i.getName().equals(old)) {
@@ -231,40 +252,40 @@ public void editadmin( String old, String field, String newvalue) throws IOExcep
 }
 
 }
-public void editlibrarian( String old, String field, String newvalue) {
-    librarians=readfromfilelibrarian();
-    boolean userFound = false;
-    for (Librarian i : librarians) {
-       if (i.getUserName().equals(old)) {
-            if ("name".equals(field)) {
-               i.setUserName(newvalue);
-              
-           } else if ("password".equals(field)) {
-              i.setPassword(newvalue);
-           } else {
-               System.out.println("Invalid field specified.");
-           }
-         break;
-       }
-    }
-     if (!userFound) {
-        System.out.println("User not found.");
-        return;
-     }
-    try{
-        FileWriter fileWriter = new FileWriter(file1, false);
-            fileWriter.close();
-  saveToFile();
-    }catch(Exception e)
-    {
-        System.out.println(e); 
-    }
-        System.out.println("Updated list of users:");
-    for (Librarian i : librarians) {
-        System.out.println("Name: " + i.getUserName() + ", Password: " + i.getPassword());
-}
-
-}
+//public void editlibrarian( String old, String field, String newvalue) {
+//    librarians=readfromfilelibrarian();
+//    boolean userFound = false;
+//    for (Librarian i : librarians) {
+//       if (i.getUserName().equals(old)) {
+//            if ("name".equals(field)) {
+//               i.setUserName(newvalue);
+//              
+//           } else if ("password".equals(field)) {
+//              i.setPassword(newvalue);
+//           } else {
+//               System.out.println("Invalid field specified.");
+//           }
+//         break;
+//       }
+//    }
+//     if (!userFound) {
+//        System.out.println("User not found.");
+//        return;
+//     }
+//    try{
+//        FileWriter fileWriter = new FileWriter(file1, false);
+//            fileWriter.close();
+//  saveToFile();
+//    }catch(Exception e)
+//    {
+//        System.out.println(e); 
+//    }
+//        System.out.println("Updated list of users:");
+//    for (Librarian i : librarians) {
+//        System.out.println("Name: " + i.getUserName() + ", Password: " + i.getPassword());
+//}
+//
+//}
  public void displaySuppliers() {
            String FileName = "Suppliers.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\" + FileName))) {
@@ -321,25 +342,19 @@ public void editlibrarian( String old, String field, String newvalue) {
          
  public List<User> searchAdmin(String field, String value) {
     List<User> results = new ArrayList<>();
-    ArrayList<Admin> admins;
-    try {
-        admins = readfromfileadmin();
-        if ("id".equalsIgnoreCase(field)) {
-            for (Admin admin : admins) {
-                if (admin.getPass().equals(value)) {
-                    results.add(admin);
-                }
-            }
-        } else if ("name".equalsIgnoreCase(field)) {
-            for (Admin admin : admins) {
-                if (admin.getName().equalsIgnoreCase(value)) {
-                    results.add(admin);
-                }
+  
+    if ("id".equalsIgnoreCase(field)) {
+        for (Admin admin : admins) {
+            if (admin.getPass().equals(value)) {
+                results.add(admin);
             }
         }
-    } catch (IOException | ClassNotFoundException e) {
-        System.out.println("Error: " + e.getMessage());
-        e.printStackTrace();
+    } else if ("name".equalsIgnoreCase(field)) {
+        for (Admin admin : admins) {
+            if (admin.getName().equalsIgnoreCase(value)) {
+                results.add(admin);
+            }
+        }
     }
     return results;
 }
@@ -367,28 +382,29 @@ public void editlibrarian( String old, String field, String newvalue) {
         }
         System.out.println("No librarian was found by this user name: "+userName);
     }
- public static double getTotalRevenue() {
-    
-    double totalRevenue = 0.0;
-    for (Book book : Librarian_Mgn.getAllbooks()) {
-        totalRevenue += book.getPrice();
+public static double getTotalRevenue(){
+    double totalrev=0.0;
+    List<Double> payments=Librarian_Mgn.readPaymentsFromFile();
+    for(Double i:payments)
+    {
+        totalrev+=i;
     }
-    return totalRevenue;
+    return totalrev;
 }
 
     /**
      *
      * @return
      */
-    public double getAverageRevenue()
-    {
-        
-    double average = 0.0;
-        average = getTotalRevenue()/Librarian_Mgn.getAllbooks().size();
-    
-    return average;
-    
-}
+public double getAverageRevenue(){
+        List<Double> avg=Librarian_Mgn.readPaymentsFromFile();
+        if(avg.isEmpty())
+        {
+            return 0.0;
+        }
+        double total= getTotalRevenue();
+        return total/avg.size();
+    }
 
    public boolean searchNameInFile(String fileName, String targetName) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
@@ -396,40 +412,13 @@ public void editlibrarian( String old, String field, String newvalue) {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\s+"); 
                 if (parts.length >= 1 && parts[0].equals(targetName)) {
-                    return true;
-                }
-
-    
-    
-    
-//    public void viewLibrarianWithMaxBorrowings()from shahd
-//    {
-//        
-//    }
-//    public void viewBorrowingsPerLibrarian() from malak
-   // {
-//        
-//    }
-    
-    
+                    }
+            }
+            return true;
+        }}
     //Mariam
             
-    
-    
-    
-//    public void viewLibrarianWithMaxBorrowings()from shahd
-//    {
-//        
-//    }
-//    public void viewBorrowingsPerLibrarian() from malak
-   // {
-//        
-//    }
-    
-    
-    //Mariam
-            
-      public void addOrder(String supplierName, String book, double amount) throws IOException {
+      public void addOrder(String supplierName, String book, double amount)  {
       
            for (int i=0;i<newSupplierList.size();i++) {
          
@@ -471,9 +460,20 @@ public void editlibrarian( String old, String field, String newvalue) {
     }
     
 public static void addLibrarian( Librarian newLibrarian){
-        Librarian.getLibrarians().add(newLibrarian);
+     //  Librarian.getLibrarians().add(newLibrarian);
         
-        saveToFile();
+       if(newLibrarian != null){
+           Librarian.getLibrarians().add(newLibrarian);
+           newLibrarian.saveToFile();
+       }
+
+//    try{
+//         Librarian.getWriter().close();
+//    }catch(IOException e){
+//        System.out.println(e);
+//    }
+       
+      //  saveToFile();
 }
  public static void saveToFile(){
           try{
@@ -558,7 +558,7 @@ public void specifyBorrowingTermDetails(User user) {
         }
         return false;
     }
-   public void addOrder(String supplierName, String bookTitle, int numberOfCopies) {
+   public void addOrder(String supplierName, String bookTitle, int numberOfCopies) throws IOException {
         Supplier supplier = new Supplier(supplierName);
        
         String FileName = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt";
@@ -791,45 +791,48 @@ public void specifyBorrowingTermDetails(User user) {
         if (pricesFile.exists()) {
             pricesFile.delete();
         }
-       if(searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",supplier.getSName())) {      
- 
-        String filePath = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt";
-      
-
-        try {
-            File inputFile = new File(filePath);
-            File tempFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\tempFile.txt");
-
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-            String currentLine;
-
-            while ((currentLine = reader.readLine()) != null) {
-                // Check if the line contains the search text
-                if (currentLine.contains(name)) {
-                    continue; // Skip the line
-                }
-                writer.write(currentLine + System.getProperty("line.separator"));
-            }
-            writer.close();
-            reader.close();
-
-            // Delete the original file
-            if (inputFile.delete()) {
-                // Rename the temporary file to the original file name
-                if (!tempFile.renameTo(inputFile)) {
-                    System.out.println("Error renaming the file.");
-                }
-            } else {
-                System.out.println("Error deleting the original file.");
-            }
-;
-
-        } catch (IOException e) {
-            System.out.println("Error reading or writing to the file: " + e.getMessage());
-        }
-    }
+       try {
+           if(searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",supplier.getSName())) {
+               
+               String filePath = "C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt";
+               
+               
+               try {
+                   File inputFile = new File(filePath);
+                   File tempFile = new File("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\tempFile.txt");
+                   
+                   BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+                   BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+                   
+                   String currentLine;
+                   
+                   while ((currentLine = reader.readLine()) != null) {
+                       // Check if the line contains the search text
+                       if (currentLine.contains(name)) {
+                           continue; // Skip the line
+                       }
+                       writer.write(currentLine + System.getProperty("line.separator"));
+                   }
+                   writer.close();
+                   reader.close();
+                   
+                   // Delete the original file
+                   if (inputFile.delete()) {
+                       // Rename the temporary file to the original file name
+                       if (!tempFile.renameTo(inputFile)) {
+                           System.out.println("Error renaming the file.");
+                       }
+                   } else {
+                       System.out.println("Error deleting the original file.");
+                   }
+                   ;
+                   
+               } catch (IOException e) {
+                   System.out.println("Error reading or writing to the file: " + e.getMessage());
+               }
+           }  } catch (IOException ex) {
+           Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
+       }
 }
 
        
@@ -854,21 +857,24 @@ public void specifyBorrowingTermDetails(User user) {
     public void addSupplier(String name, String password) {
         Supplier supplier=new Supplier(name,password);
         supplier.settingPrices();
-       if(searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",name)) {
-                   System.out.println("Supplier already exist");
+       try {
+           if(searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",name)) {
+               System.out.println("Supplier already exist");
+           }
+           else{
+               Supplier newSupplier = new Supplier(name, password);
+               suppliers.add(newSupplier);
+               saveSuppliersToFile();
+               supplier.setSName(name);
+               supplier.setSPassword(password);
+               supplier.saveSupplierInfo();
+               System.out.println("Supplier added successfully!");
+               
+           }  } catch (IOException ex) {
+           Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
        }
-       else{
-        Supplier newSupplier = new Supplier(name, password);
-        suppliers.add(newSupplier);
-        saveSuppliersToFile();
-        supplier.setSName(name);
-        supplier.setSPassword(password);
-        supplier.saveSupplierInfo();
-        System.out.println("Supplier added successfully!");
-
     }
-    }
-       public void removeSupplier(String name) {
+       public void removeSupplier(String name) throws IOException {
          Supplier newSupplier = new Supplier(name);
        String FileName="Suppliers.txt";
         if (searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\"+FileName,name)) {
@@ -935,7 +941,7 @@ public void specifyBorrowingTermDetails(User user) {
 
    
 
-     public void editSupplier(String currentName,  String newPassword) {
+     public void editSupplier(String currentName,  String newPassword) throws IOException {
         searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",currentName);
         if (searchNameInFile("C:\\Users\\maria\\Documents\\NetBeansProjects\\library\\src\\library\\Suppliers.txt",currentName)) {
 
