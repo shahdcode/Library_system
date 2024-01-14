@@ -5,40 +5,29 @@ import java.time.*;
 import java.util.Date;
 import java.io.*;
 
-public class Borrower_Mgn implements Serializable {
+public class FileManagment implements Serializable {
     //member fields
     private User user;
     private Book book;
-    private  Duration duration;
+    private static final String FILE_PATH = "AllBorrowers.dat";
     private String name;
     private String password;
     private static List<Book> borrowedBooks;
-    
-//    private static Date borrowDate;
-//    private static Date dueDate;
-//    private static Date returnDate;
-    private  static ArrayList<Book> loanHistory= new ArrayList<>(); //3ayzha total and not per user 
-    private int fine=20;//perDay
+    private  static ArrayList<Book> borrowHistory= new ArrayList<>(); //3ayzha total and not per user 
+    private int fine=10;//perDay
     //constructor 
- public Borrower_Mgn() {
+ public FileManagment() {
     
     }
-    public Borrower_Mgn(Book book) {
+    public FileManagment(Book book) {
         this.book = book;
     }
     
-    public Borrower_Mgn(Borrower borrrower, Book book){
+    public FileManagment(Borrower borrrower, Book book){
         this.user=user;
         this.book=book;
 }
 
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int seconds) {
-        duration= Duration.ofSeconds(seconds);
-    }
     
 //    public Borrower_Mgn(){
 ////        this.user=user;
@@ -53,21 +42,12 @@ public class Borrower_Mgn implements Serializable {
     
     //getter functions, no need lel setters 
 
-    public static List<Book> getLoanHistory() {
-        return loanHistory;
+    public static List<Book> getBorrowHistory() {
+        return borrowHistory;
     }
 
-    public static void DateBorrowed(){
-        
-        Date date= new Date();
-        System.out.println("Date & time of borrowing" +date);
-    }
+    
   
-    public static void DateReturned(){
-       
-        Date date= new Date();
-        System.out.println("Date & time returned" +date);
-    }
   
        public void addBorrowedBook(Book book) {
         this.borrowedBooks.add(book);
@@ -79,9 +59,9 @@ public class Borrower_Mgn implements Serializable {
 
     
 
-
+//  display borrowings
     public void  viewBorrowingHistory(User user){
-      for(Book b:loanHistory ){
+      for(Book b:borrowHistory ){
           System.out.println(b); 
       }
   }
@@ -95,7 +75,7 @@ public class Borrower_Mgn implements Serializable {
 
 
 
-    private static final String FILE_PATH = "AllBorrowers.dat";
+   
 
 
        private static  ArrayList<Book> info_history= new ArrayList<>();
@@ -117,7 +97,7 @@ public class Borrower_Mgn implements Serializable {
             System.out.println(e);
         }
     }
-    
+   
  public List<User> readFromFile() {
     List<User> users = new ArrayList<>(); 
 
@@ -158,22 +138,25 @@ public class Borrower_Mgn implements Serializable {
 }
 
   
-    public static void printAllToFile(Borrower borrower) {
+        public static void printAllToFile(String borrower) {
       //  borrower.setName("sara");
       try{
         PrintWriter p = new PrintWriter(new FileWriter("Borrowers_ALL.txt", true));
  
-         p.println(borrower.getName());
+         p.println(borrower);
          for(Book book: info_history){
            p.println(book);
-         
+          
          }
+         p.println("Total borrowed: "+Borrower.getBorrow_count());
+         p.println();
             p.close();
+             info_history.clear();
       }catch(IOException e){
           System.out.println(e);
       }
     }
-       
+       //display all
    public static void readFromFileAll() {
         try (BufferedReader br = new BufferedReader(new FileReader("Borrowers_ALL.txt"))) {
             String line;
@@ -184,5 +167,9 @@ public class Borrower_Mgn implements Serializable {
             System.out.println("An error occurred while reading the file: " + e.getMessage());
         }
     }
-    
+  
+
+
+
+
 }

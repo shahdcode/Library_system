@@ -13,16 +13,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.*;
 
 public  class User {
     private String Name;
+    private Set<Book> borrowedBooks;
 private String pass;
  private ArrayList<Book> BorrowedBooks=new ArrayList();
  protected static ArrayList<User> users=new ArrayList<>();//stores the borrower object 
 public User(String Name, String pass) {//constructor
         this.Name = Name;
         this.pass=pass;
+       // borrowedBooks= new HashSet<>();
     }
 
     public User() {
@@ -59,7 +62,7 @@ public User(String Name, String pass) {//constructor
    public void editName(String newName){
        System.out.println("No user to edit");
    }
-   public  Boolean search(String key){
+   public boolean search(String key){
        return false;
    }
     
@@ -102,15 +105,16 @@ public User(String Name, String pass) {//constructor
 //        '
  
 //    }
+  public void addTo(String name, String pass){
+      System.out.println("No borrower to add");
+  }
  
  public void printtofile() {
    
      System.out.println("no borrower to add");
 }
  
-public void numberOfBorrowperUser(){
-    System.out.println("user didnt borrow book");
-}
+
  
 public void clearCart()
  {
@@ -126,6 +130,24 @@ public void clearCart()
 public void displayAllSuppliers(){
     System.out.println("no supplies");
 }
+
+public User getBorrowerWithMaxBorrowings(){
+return null;
+}
+
+public User getBorrowerWithMaxRevenue() {
+    return null;
+}
+
+public void numberOfBorrowperUser(User u){
+    System.out.println("No borrower");
+   
+}
+
+
+//public static void removeBorrowerFromFile(String borrowerName) {
+//    System.out.println("No borrower to remove");
+//}
 // public void AllBorrowers(List<User> users){
 //     System.out.println("No borrower to add");
 //}

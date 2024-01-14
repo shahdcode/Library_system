@@ -132,7 +132,7 @@ public class Librarian_Mgn  extends User{
     }
     
     
-    private Borrower_Mgn borrowerManager;
+    private FileManagment borrowerManager;
    public void specifyBorrowingTermDetails() {
      borrowerManager.readFromFileAll();
     }
@@ -246,4 +246,5 @@ public static ArrayList<Double>gettotalpay(){
         }
         return pay;
     }
+  
 }
